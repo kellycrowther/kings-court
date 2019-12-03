@@ -1,0 +1,148 @@
+Table 1
+Place,Bib,Name,First name,Last name,Team name,Gender
+1,2,Will Lange,Will,Lange,SUMMIT,Male
+2,1,Jack Conde,Jack,Conde,SUMMIT,Male
+3,4,Nathaniel Henson,Nathaniel,Henson,SUMMIT,Male
+4,3,Anton Micek,Anton,Micek,BEND,Male
+5,8,Cooper Nelson,Cooper,Nelson,SUMMIT,Male
+6,79,Ann McColgan,Ann,McColgan,BEND,Female
+7,7,Taylor Nelson,Taylor,Nelson,SUMMIT,Male
+8,18,Zachary Jayne,Zachary,Jayne,SUMMIT,Male
+9,10,Benjamin Kaden,Benjamin,Kaden,HRV,Male
+10,5,Pelle Bergstrom,Pelle,Bergstrom,HRV,Male
+11,77,Liv Downing,Liv,Downing,SUMMIT,Female
+12,73,Katelyn Costello,Katelyn,Costello,RPA,Female
+13,15,Evan Grover,Evan,Grover,SUMMIT,Male
+14,17,Jacob Christensen,Jacob,Christensen,SUMMIT,Male
+15,76,Alice Mcknight,Alice,Mcknight,BEND,Female
+16,21,Micah Capson,Micah,Capson,RV REDMOND,Male
+17,6,Benjamin Balazs,Benjamin,Balazs,PROV,Male
+18,24,Ethan Barker,Ethan,Barker,SUMMIT,Male
+19,13,Nicolas Campbell,Nicolas,Campbell,SUMMIT,Male
+20,82,Estelle Hyde,Estelle,Hyde,SUMMIT,Female
+21,81,Jasper Fievet,Jasper,Fievet,SUMMIT,Female
+22,83,Kira Gilbert,Kira,Gilbert,BEND,Female
+23,9,Soren Nyquist,Soren,Nyquist,BEND,Male
+24,78,Sophia Corkran,Sophia,Corkran,PROV,Female
+25,71,Jorun Downing,Jorun,Downing,SUMMIT,Female
+26,90,Ashley Boone,Ashley,Boone,SUMMIT,Female
+27,35,Evan Eby,Evan,Eby,RV REDMOND,Male
+28,72,Scout Gesuale,Scout,Gesuale,REALMS,Female
+29,16,Marshall Bailey,Marshall,Bailey,HRV,Male
+30,14,Jared Hearing,Jared,Hearing,RV REDMOND,Male
+31,84,Jessica Whitticar,Jessica,Whitticar,RPA,Female
+32,28,Jackson Bojanowski,Jackson,Bojanowski,RV REDMOND,Male
+33,27,Raymond Ingersoll,Raymond,Ingersoll,CORVALLIS,Male
+34,33,Koen Light,Koen,Light,SUMMIT,Male
+35,34,Lucas Beebe,Lucas,Beebe,SUMMIT,Male
+36,12,Jonathan Skidmore,Jonathan,Skidmore,SUMMIT,Male
+37,32,Avery Jordan,Avery,Jordan,RV REDMOND,Male
+38,26,Alex Shaffer,Alex,Shaffer,SUMMIT,Male
+39,36,Alexander Fraser,Alexander,Fraser,SUMMIT,Male
+40,85,Elle St Clair,Elle,St clair,SUMMIT,Female
+41,25,Sean Arpag,Sean,Arpag,HRV,Male
+42,23,Rohan Prull,Rohan,Prull,SUMMIT,Male
+43,31,Ethan Peters,Ethan,Peters,RV REDMOND,Male
+44,87,Ellie Skjersaa,Ellie,Skjersaa,SUMMIT,Female
+45,41,Caiden Hartrich,Caiden,Hartrich,SUMMIT,Male
+46,42,John Deaver,John,Deaver,SUMMIT,Male
+47,91,Sophia Kaden,Sophia,Kaden,HRV,Female
+48,30,Zachary Carney,Zachary,Carney,SUMMIT,Male
+49,100,Luka Paider,Luka,Paider,HRV,Female
+50,40,Trevor Ricker,Trevor,Ricker,BEND,Male
+51,54,Rowan Mcdole,Rowan,Mcdole,BEND,Male
+52,47,Mikel Solaguren Anaut,Mikel,Solaguren anaut,BEND,Male
+53,92,Caroline Sherwood,Caroline,Sherwood,BEND,Female
+54,20,Ethan Fowler,Ethan,Fowler,HRV,Male
+55,51,Dasan Simmons,Dasan,Simmons,SUMMIT,Male
+56,94,Celia Acosta,Celia,Acosta,HRV,Female
+57,19,Aiden Wood,Aiden,Wood,HRV,Male
+58,89,Martha Schwarz,Martha,Schwarz,BEND,Female
+59,114,Isabella Moore,Isabella,Moore,SUMMIT,Female
+60,95,Emma Kelly,Emma,Kelly,HRV,Female
+61,97,Adriauna Pendergrass,Adriauna,Pendergrass,RPA,Female
+62,101,Naomi Burkett,Naomi,Burkett,SUMMIT,Female
+63,98,Kate Hardy,Kate,Hardy,RV REDMOND,Female
+64,104,Marleigh Dunning,Marleigh,Dunning,RPA,Female
+65,110,Lucia Daprano,Lucia,Daprano,SUMMIT,Female
+66,49,William Kissinger,William,Kissinger,HRV,Male
+67,86,Galen Johnson,Galen,Johnson,BEND,Female
+68,39,Logan Heagerty,Logan,Heagerty,RV REDMOND,Male
+69,96,Natalie Walsh,Natalie,Walsh,SUMMIT,Female
+70,99,Josephine Stenn,Josephine,Stenn,HRV,Female
+71,117,Lauryn Duryee,Lauryn,Duryee,REDMOND,Female
+72,126,Lydia Gerald,Lydia,Gerald,HRV,Female
+73,115,Natalie Stevens,Natalie,Stevens,SUMMIT,Female
+74,121,Poppy Miller,Poppy,Miller,HRV,Female
+75,105,Lyric Emmons,Lyric,Emmons,HRV,Female
+76,124,Mira Olson,Mira,Olson,HRV,Female
+77,46,Carson Bitner,Carson,Bitner,SUMMIT,Male
+78,123,Erika Wellenstein,Erika,Wellenstein,HRV,Female
+79,43,Sean Counihan,Sean,Counihan,HRV,Male
+80,122,Hannah Dennis,Hannah,Dennis,BEND,Female
+81,45,Austin Allen,Austin,Allen,RV REDMOND,Male
+82,102,Athena Peterson,Athena,Peterson,BEND,Female
+83,37,Ryan Doering,Ryan,Doering,SUMMIT,Male
+84,136,Mckenzie Days,Mckenzie,Days,BEND,Female
+85,133,Josie Graydon,Josie,Graydon,RPA,Female
+86,113,Chantel Rumenapp,Chantel,Rumenapp,RV REDMOND,Female
+87,106,Elena Smith,Elena,Smith,BEND,Female
+88,129,Lucy Hennessy,Lucy,Hennessy,HRV,Female
+89,93,Eleanor Barton,Eleanor,Barton,HRV,Female
+90,108,Sydney Dedrick,Sydney,Dedrick,BEND,Female
+91,144,Tate Hixson,Tate,Hixson,HRV,Female
+92,132,Payton Bunch,Payton,Bunch,HRV,Female
+93,135,Sophie Fischer,Sophie,Fischer,SUMMIT,Female
+94,112,Johanne Nielsen,Johanne,Nielsen,BEND,Female
+95,119,Sierra Abbott,Sierra,Abbott,BEND,Female
+96,57,Zachary Daines,Zachary,Daines,SUMMIT,Male
+97,149,Grace Reagan,Grace,Reagan,HRV,Female
+98,128,Emma Pyott,Emma,Pyott,SUMMIT,Female
+99,116,Olivia Curley,Olivia,Curley,SUMMIT,Female
+100,148,Vivienne Mcfarland Price,Vivienne,Mcfarland price,CORVALLIS,Female
+101,139,Kyla Zorza,Kyla,Zorza,HRV,Female
+102,137,Emma Salka,Emma,Salka,RV REDMOND,Female
+103,48,Dhruv Patel,Dhruv,Patel,RV REDMOND,Male
+104,142,Phoebe Schneider,Phoebe,Schneider,CORVALLIS,Female
+105,127,Mieka Mcknight,Mieka,Mcknight,HRV,Female
+106,141,Regina Sanchez,Regina,Sanchez,HRV,Female
+107,125,Megan Lasala,Megan,Lasala,SUMMIT,Female
+108,134,Sonia González Casarrubios,Sonia,González casarrubios,RPA,Female
+109,58,Max Rastovich,Max,Rastovich,BEND,Male
+110,55,Sky Siskar,Sky,Siskar,HRV,Male
+-,11,Mario Cacciola,Mario,Cacciola,SUMMIT,Male
+-,22,Cayden Fiala,Cayden,Fiala,SUMMIT,Male
+-,29,Nicholai Moroukian,Nicholai,Moroukian,BEND,Male
+-,44,Michael Debonis,Michael,Debonis,HRV,Male
+-,50,Ellis Kline,Ellis,Kline,CORVALLIS,Male
+-,52,Solomon Jackson,Solomon,Jackson,HRV,Male
+-,53,Ethan Bryan,Ethan,Bryan,BEND,Male
+-,56,Michael Davies,Michael,Davies,SUMMIT,Male
+-,59,UA UA,UA,UA,UA,Male
+-,60,UA UA,UA,UA,UA,Male
+-,61,UA UA,UA,UA,UA,Male
+-,62,UA UA,UA,UA,UA,Male
+-,63,UA UA,UA,UA,UA,Male
+-,74,Frances Dickinson,Frances,Dickinson,HRV,Female
+-,75,Lillian Mcnabb,Lillian,Mcnabb,BEND,Female
+-,80,Josephine Dickinson,Josephine,Dickinson,HRV,Female
+-,88,Ruby Gates,Ruby,Gates,RV REDMOND,Female
+-,103,Charlene Redder,Charlene,Redder,SMA,Female
+-,107,Ella Whitaker,Ella,Whitaker,SMA,Female
+-,109,Anne Marie Covlin,Anne marie,Covlin,BEND,Female
+-,111,Sophie Dorn,Sophie,Dorn,SMA,Female
+-,118,Amelia Leonard,Amelia,Leonard,SMA,Female
+-,120,Lillijane Cavenaugh,Lillijane,Cavenaugh,SMA,Female
+-,130,Maeve Eynard,Maeve,Eynard,SMA,Female
+-,131,Kira Mahaffy,Kira,Mahaffy,SMA,Female
+-,138,Rizal Deingruber,Rizal,Deingruber,SMA,Female
+-,140,Tegan Boland,Tegan,Boland,SMA,Female
+-,143,Hester Franklin,Hester,Franklin,SMA,Female
+-,145,Shanae Haworth,Shanae,Haworth,SUMMIT,Female
+-,146,Alia Shafran,Alia,Shafran,SMA,Female
+-,147,Sydney Williams,Sydney,Williams,SUMMIT,Female
+-,150,UA UA,UA,UA,UA,Female
+-,151,UA UA,UA,UA,UA,Female
+-,152,UA UA,UA,UA,UA,Female
+-,153,UA UA,UA,UA,UA,Female
+-,154,UA UA,UA,UA,UA,Female
