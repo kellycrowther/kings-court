@@ -59,6 +59,8 @@ function setHeats(csvData) {
   });
 }
 
+// TODO: NEEDS TO HANDLE DIFFERENT ROUNDS
+// TODO: NEEDS TO SET THE USERS NEXT ROUND HEAT
 function setSeed(row, racers) {
   // get all the racers in the selected racer's heat and sort them by highest to lowest seed
   const racerHeat = racers
@@ -70,7 +72,7 @@ function setSeed(row, racers) {
   // get the last heat
   const lastHeat = sortRacers
     .sort((a, b) => b.Round1Heat - a.Round1Heat)
-    .find(racer => racer.Gender === row.Gender);
+    .find(racer => racer.Gender === row.Gender).Round1Heat;
 
   // get the index of the object of the seed that corresponds to the racer's placement after the heat
   const indexOfPostRaceSeedWithinCurrentRound = row.Round1Result - 1;
@@ -160,6 +162,34 @@ const columnsRound2 = [
   {
     title: "Round 2 Result",
     dataIndex: "Round2Result",
+    editable: true
+  }
+];
+
+const columnsRound3 = [
+  {
+    title: "Seed",
+    dataIndex: "Round3Seed"
+  },
+  {
+    title: "Name",
+    dataIndex: "Name"
+  },
+  {
+    title: "Gender",
+    dataIndex: "Gender"
+  },
+  {
+    title: "Team Name",
+    dataIndex: "Team name"
+  },
+  {
+    title: "Round 3 Heat",
+    dataIndex: "Round3Heat"
+  },
+  {
+    title: "Round 3 Result",
+    dataIndex: "Round3Result",
     editable: true
   }
 ];
@@ -331,6 +361,22 @@ export function Manage() {
     };
   });
 
+  const columnsEditableRound3 = columnsRound3.map(col => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: handleSave
+      })
+    };
+  });
+
   const components = {
     body: {
       row: EditableFormRow,
@@ -359,11 +405,24 @@ export function Manage() {
         rowKey="Bib"
       />
 
+      <hr />
+      <div style={{ padding: "30px" }}></div>
       <h3>Round 2</h3>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
         columns={columnsEditableRound2}
+        dataSource={racers}
+        rowKey="Bib"
+      />
+
+      <hr />
+      <div style={{ padding: "30px" }}></div>
+      <h3>Round 3</h3>
+      <Table
+        components={components}
+        rowClassName={() => "editable-row"}
+        columns={columnsEditableRound3}
         dataSource={racers}
         rowKey="Bib"
       />
