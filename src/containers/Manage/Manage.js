@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Upload, message, Button, Icon, Table, Form, Select } from "antd";
-
 import parse from "csv-parse";
 
 var data = require("../../mocks/mock-data.json");
@@ -10,6 +9,7 @@ const { Option } = Select;
 function readCSV(info) {
   const csvData = [];
   let reader = new FileReader();
+  // need promise to ensure program doesn't continuing executing without having processed the data
   return new Promise(resolve => {
     reader.readAsText(info.file.originFileObj);
     reader.onload = e => {
@@ -34,14 +34,18 @@ function readCSV(info) {
 }
 
 function setHeats(csvData) {
+  // females start with heat 1, males 2
   let currentFemaleHeat = 1;
   let currentMaleHeat = 2;
   let currentFemaleCount = 0;
   let currentMaleCount = 0;
   csvData.map(row => {
+    // we are hardcoding the heats to have 6 and less skiers
     if (row.Gender === "Female" && currentFemaleCount <= 6) {
       row.Round1Heat = currentFemaleHeat;
+      // add 1 to the skier count and reset if the count is equal to 6
       currentFemaleCount = currentFemaleCount < 6 ? currentFemaleCount + 1 : 1;
+      // we are alternating odd / even heats with girls being odd number and boys even so add two to the initial heat
       currentFemaleHeat =
         currentFemaleCount < 6 ? currentFemaleHeat : currentFemaleHeat + 2;
     }
@@ -53,6 +57,55 @@ function setHeats(csvData) {
     }
     return row;
   });
+}
+
+function setSeed(row, racers) {
+  // get all the racers in the selected racer's heat and sort them by highest to lowest seed
+  const racerHeat = racers
+    .filter(racer => racer.Round1Heat === row.Round1Heat)
+    .sort((a, b) => a - b);
+
+  const sortRacers = [...racers];
+
+  // get the last heat
+  const lastHeat = sortRacers
+    .sort((a, b) => b.Round1Heat - a.Round1Heat)
+    .find(racer => racer.Gender === row.Gender);
+
+  // get the index of the object of the seed that corresponds to the racer's placement after the heat
+  const indexOfPostRaceSeedWithinCurrentRound = row.Round1Result - 1;
+
+  // using the index, get the index of what seed they actually placed as based on their results
+  const seedWithinCurrentRound = parseInt(
+    racerHeat[indexOfPostRaceSeedWithinCurrentRound].Seed
+  );
+
+  // handle the heat 1 edge since racers seeded 1-4 will just move on to next round
+  if (row.Round1Heat === 1 && row.Round1Result <= 4) {
+    row.Round2Seed = seedWithinCurrentRound;
+  }
+  if (row.Round1Heat === 1 && row.Round1Result > 4) {
+    row.Round2Seed = seedWithinCurrentRound + 2;
+  }
+
+  // handle all the heats between the first and the last heat
+  // racers who are the top four in the heat move up two seeds
+  if (row.Round1Heat > 1 && row.Round1Result <= 4) {
+    row.Round2Seed = seedWithinCurrentRound - 2;
+  }
+  // racers who are the last two in their heat move down two seeds
+  if (row.Round1Heat > 1 && row.Round1Result > 4) {
+    row.Round2Seed = seedWithinCurrentRound + 2;
+  }
+
+  // handle the last heat edge since racers seeded 3-6 will just move on to next round
+  if (row.Round1Heat === lastHeat && row.Round1Result <= 2) {
+    row.Round2Seed = seedWithinCurrentRound - 2;
+  }
+  if (row.Round1Heat === lastHeat && row.Round1Result > 2) {
+    row.Round2Seed = seedWithinCurrentRound;
+  }
+  return row;
 }
 
 const columns = [
@@ -86,7 +139,7 @@ const columns = [
 const columnsRound2 = [
   {
     title: "Seed",
-    dataIndex: "Seed"
+    dataIndex: "Round2Seed"
   },
   {
     title: "Name",
@@ -151,6 +204,7 @@ class EditableCell extends React.Component {
     // title in props
     const { children, dataIndex, record } = this.props;
     // const { editing } = this.state;
+    // replace editing so it is not dependent on toggle, but heat
     return this.state.editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
@@ -178,7 +232,6 @@ class EditableCell extends React.Component {
         style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
-        {/* fix the edit so it is not dependent on toggle, but heat */}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {children}
       </div>
@@ -242,6 +295,7 @@ export function Manage() {
     const index = racers.findIndex(item => row.Bib === item.Bib);
     const editRacers = [...racers];
     editRacers[index] = row;
+    editRacers[index] = setSeed(editRacers[index], editRacers);
     setRacers(editRacers);
   };
 
