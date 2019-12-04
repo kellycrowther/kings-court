@@ -61,7 +61,9 @@ function setHeats(csvData) {
 
 // TODO: NEEDS TO HANDLE DIFFERENT ROUNDS
 // TODO: NEEDS TO SET THE USERS NEXT ROUND HEAT
-function setSeed(row, racers) {
+function setSeed(row, racers, roundResultKey, heatDataIndex) {
+  console.info("ROUND KEY: ", roundResultKey);
+  console.info("Heat DATA INDEX: ", heatDataIndex);
   // get all the racers in the selected racer's heat and sort them by highest to lowest seed
   const racerHeat = racers
     .filter(racer => racer.Round1Heat === row.Round1Heat)
@@ -134,6 +136,7 @@ const columns = [
   {
     title: "Round 1 Result",
     dataIndex: "Round1Result",
+    heatDataIndex: "Round1Heat",
     editable: true
   }
 ];
@@ -162,6 +165,7 @@ const columnsRound2 = [
   {
     title: "Round 2 Result",
     dataIndex: "Round2Result",
+    heatDataIndex: "Round2Heat",
     editable: true
   }
 ];
@@ -190,6 +194,7 @@ const columnsRound3 = [
   {
     title: "Round 3 Result",
     dataIndex: "Round3Result",
+    heatDataIndex: "Round3Heat",
     editable: true
   }
 ];
@@ -218,21 +223,21 @@ class EditableCell extends React.Component {
     // });
   };
 
-  save = e => {
+  save = (e, dataIndex, heatDataIndex) => {
     const { record, handleSave } = this.props;
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
         return;
       }
       this.toggleEdit();
-      handleSave({ ...record, ...values });
+      handleSave({ ...record, ...values }, dataIndex, heatDataIndex);
     });
   };
 
   renderCell = form => {
     this.form = form;
     // title in props
-    const { children, dataIndex, record } = this.props;
+    const { children, dataIndex, record, heatDataIndex } = this.props;
     // const { editing } = this.state;
     // replace editing so it is not dependent on toggle, but heat
     return this.state.editing ? (
@@ -243,8 +248,8 @@ class EditableCell extends React.Component {
         })(
           <Select
             ref={node => (this.input = node)}
-            onSelect={this.save}
-            onBlur={this.save}
+            onSelect={event => this.save(event, dataIndex, heatDataIndex)}
+            onBlur={event => this.save(event, dataIndex, heatDataIndex)}
             style={{ width: 120 }}
           >
             <Option value={1}>1</Option>
@@ -277,6 +282,7 @@ class EditableCell extends React.Component {
       index,
       handleSave,
       children,
+      heatDataIndex,
       ...restProps
     } = this.props;
     return (
@@ -321,11 +327,16 @@ export function Manage() {
     }
   };
 
-  const handleSave = row => {
+  const handleSave = (row, dataIndex, heatDataIndex) => {
     const index = racers.findIndex(item => row.Bib === item.Bib);
     const editRacers = [...racers];
     editRacers[index] = row;
-    editRacers[index] = setSeed(editRacers[index], editRacers);
+    editRacers[index] = setSeed(
+      editRacers[index],
+      editRacers,
+      dataIndex,
+      heatDataIndex
+    );
     setRacers(editRacers);
   };
 
@@ -340,7 +351,8 @@ export function Manage() {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave: handleSave
+        handleSave: handleSave,
+        heatDataIndex: col.heatDataIndex
       })
     };
   });
@@ -356,7 +368,8 @@ export function Manage() {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave: handleSave
+        handleSave: handleSave,
+        heatDataIndex: col.heatDataIndex
       })
     };
   });
@@ -372,7 +385,8 @@ export function Manage() {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave: handleSave
+        handleSave: handleSave,
+        heatDataIndex: col.heatDataIndex
       })
     };
   });
