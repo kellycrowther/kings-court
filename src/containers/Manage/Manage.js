@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, message, Button, Icon, Table, Form, Select } from "antd";
 
 import parse from "csv-parse";
+
+var data = require("../../mocks/mock-data.json");
 
 const { Option } = Select;
 
@@ -24,16 +26,39 @@ function readCSV(info) {
         .on("end", function() {
           // do something with csvData
           // console.log(csvData);
+          setHeats(csvData);
           resolve(csvData);
         });
     };
   });
 }
 
+function setHeats(csvData) {
+  let currentFemaleHeat = 1;
+  let currentMaleHeat = 2;
+  let currentFemaleCount = 0;
+  let currentMaleCount = 0;
+  csvData.map(row => {
+    if (row.Gender === "Female" && currentFemaleCount <= 6) {
+      row.Round1Heat = currentFemaleHeat;
+      currentFemaleCount = currentFemaleCount < 6 ? currentFemaleCount + 1 : 1;
+      currentFemaleHeat =
+        currentFemaleCount < 6 ? currentFemaleHeat : currentFemaleHeat + 2;
+    }
+    if (row.Gender === "Male" && currentMaleCount <= 6) {
+      row.Round1Heat = currentMaleHeat;
+      currentMaleCount = currentMaleCount < 6 ? currentMaleCount + 1 : 1;
+      currentMaleHeat =
+        currentMaleCount < 6 ? currentMaleHeat : currentMaleHeat + 2;
+    }
+    return row;
+  });
+}
+
 const columns = [
   {
     title: "Seed",
-    dataIndex: "Place"
+    dataIndex: "Seed"
   },
   {
     title: "Name",
@@ -48,8 +73,40 @@ const columns = [
     dataIndex: "Team name"
   },
   {
+    title: "Round 1 Heat",
+    dataIndex: "Round1Heat"
+  },
+  {
     title: "Round 1 Result",
     dataIndex: "Round1Result",
+    editable: true
+  }
+];
+
+const columnsRound2 = [
+  {
+    title: "Seed",
+    dataIndex: "Seed"
+  },
+  {
+    title: "Name",
+    dataIndex: "Name"
+  },
+  {
+    title: "Gender",
+    dataIndex: "Gender"
+  },
+  {
+    title: "Team Name",
+    dataIndex: "Team name"
+  },
+  {
+    title: "Round 2 Heat",
+    dataIndex: "Round2Heat"
+  },
+  {
+    title: "Round 2 Result",
+    dataIndex: "Round2Result",
     editable: true
   }
 ];
@@ -66,17 +123,16 @@ const EditableFormRow = Form.create()(EditableRow);
 
 class EditableCell extends React.Component {
   state = {
-    editing: false
+    editing: true
   };
 
   toggleEdit = () => {
-    console.info("STATE: ", this.state);
-    const editing = !this.state.editing;
-    this.setState({ editing }, () => {
-      if (editing) {
-        this.input.focus();
-      }
-    });
+    // const editing = !this.state.editing;
+    // this.setState({ editing }, () => {
+    //   if (editing) {
+    //     this.input.focus();
+    //   }
+    // });
   };
 
   save = e => {
@@ -92,27 +148,23 @@ class EditableCell extends React.Component {
 
   renderCell = form => {
     this.form = form;
-    const { children, dataIndex, record, title } = this.props;
-    const { editing } = this.state;
-    return editing ? (
+    // title in props
+    const { children, dataIndex, record } = this.props;
+    // const { editing } = this.state;
+    return this.state.editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
-          rules: [
-            {
-              required: true,
-              message: `${title} is required.`
-            }
-          ],
+          rules: [],
           initialValue: record[dataIndex]
         })(
           <Select
             ref={node => (this.input = node)}
-            onChange={this.save}
+            onSelect={this.save}
             onBlur={this.save}
             style={{ width: 120 }}
           >
             <Option value={1}>1</Option>
-            <Option value={999}>999</Option>
+            <Option value={2}>2</Option>
             <Option value={3}>3</Option>
             <Option value={4}>4</Option>
             <Option value={5}>5</Option>
@@ -126,7 +178,8 @@ class EditableCell extends React.Component {
         style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
-        &nbsp;
+        {/* fix the edit so it is not dependent on toggle, but heat */}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {children}
       </div>
     );
@@ -158,6 +211,12 @@ class EditableCell extends React.Component {
 export function Manage() {
   const [racers, setRacers] = useState([]);
 
+  // Load mock data
+  useEffect(() => {
+    setHeats(data);
+    setRacers(data);
+  }, []);
+
   const props = {
     name: "file",
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
@@ -180,18 +239,29 @@ export function Manage() {
   };
 
   const handleSave = row => {
-    const editRacers = racers;
-    const index = editRacers.findIndex(item => row.key === item.key);
-    const item = editRacers[index];
-    editRacers.splice(index, 1, {
-      ...item,
-      ...row
-    });
-    console.info("EDIT RACERS: ", editRacers);
+    const index = racers.findIndex(item => row.Bib === item.Bib);
+    const editRacers = [...racers];
+    editRacers[index] = row;
     setRacers(editRacers);
   };
 
   const columnsEditable = columns.map(col => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: handleSave
+      })
+    };
+  });
+
+  const columnsEditableRound2 = columnsRound2.map(col => {
     if (!col.editable) {
       return col;
     }
@@ -226,12 +296,22 @@ export function Manage() {
         </Button>
       </Upload>
 
+      <h3>Round 1</h3>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
         columns={columnsEditable}
         dataSource={racers}
-        rowKey="Place"
+        rowKey="Bib"
+      />
+
+      <h3>Round 2</h3>
+      <Table
+        components={components}
+        rowClassName={() => "editable-row"}
+        columns={columnsEditableRound2}
+        dataSource={racers}
+        rowKey="Bib"
       />
     </div>
   );
