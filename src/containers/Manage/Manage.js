@@ -64,20 +64,27 @@ function setHeats(csvData) {
 function setSeed(row, racers, roundResultKey, heatDataIndex) {
   console.info("ROUND KEY: ", roundResultKey);
   console.info("Heat DATA INDEX: ", heatDataIndex);
+
+  let roundSeed;
+  if (heatDataIndex === "Round2Heat") {
+    roundSeed = "Round3Seed";
+  } else if (heatDataIndex === "Round1Heat") {
+    roundSeed = "Round2Seed";
+  }
   // get all the racers in the selected racer's heat and sort them by highest to lowest seed
   const racerHeat = racers
-    .filter(racer => racer.Round1Heat === row.Round1Heat)
+    .filter(racer => racer[heatDataIndex] === row[heatDataIndex])
     .sort((a, b) => a - b);
 
   const sortRacers = [...racers];
 
   // get the last heat
   const lastHeat = sortRacers
-    .sort((a, b) => b.Round1Heat - a.Round1Heat)
-    .find(racer => racer.Gender === row.Gender).Round1Heat;
+    .sort((a, b) => b[heatDataIndex] - a[heatDataIndex])
+    .find(racer => racer.Gender === row.Gender)[heatDataIndex];
 
   // get the index of the object of the seed that corresponds to the racer's placement after the heat
-  const indexOfPostRaceSeedWithinCurrentRound = row.Round1Result - 1;
+  const indexOfPostRaceSeedWithinCurrentRound = row[roundResultKey] - 1;
 
   // using the index, get the index of what seed they actually placed as based on their results
   const seedWithinCurrentRound = parseInt(
@@ -85,33 +92,37 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
   );
 
   // handle the heat 1 edge since racers seeded 1-4 will just move on to next round
-  if (row.Round1Heat === 1 && row.Round1Result <= 4) {
-    row.Round2Seed = seedWithinCurrentRound;
+  if (row.Round1Heat === 1 && row[roundResultKey] <= 4) {
+    row[roundSeed] = seedWithinCurrentRound;
   }
-  if (row.Round1Heat === 1 && row.Round1Result > 4) {
-    row.Round2Seed = seedWithinCurrentRound + 2;
+  if (row.Round1Heat === 1 && row[roundResultKey] > 4) {
+    row[roundSeed] = seedWithinCurrentRound + 2;
   }
 
   // handle all the heats between the first and the last heat
   // racers who are the top two in the heat move up two seeds
-  if (row.Round1Heat > 1 && row.Round1Result <= 2) {
-    row.Round2Seed = seedWithinCurrentRound - 2;
+  if (row.Round1Heat > 1 && row[roundResultKey] <= 2) {
+    row[roundSeed] = seedWithinCurrentRound - 2;
   }
   // racers who placed in the middle two retain their current seed
-  if (row.Round1Heat > 1 && row.Round1Result > 2 && row.Round1Result <= 4) {
-    row.Round2Seed = seedWithinCurrentRound;
+  if (
+    row.Round1Heat > 1 &&
+    row[roundResultKey] > 2 &&
+    row[roundResultKey] <= 4
+  ) {
+    row[roundSeed] = seedWithinCurrentRound;
   }
   // racers who are the last two in their heat move down two seeds
-  if (row.Round1Heat > 1 && row.Round1Result > 4) {
-    row.Round2Seed = seedWithinCurrentRound + 2;
+  if (row.Round1Heat > 1 && row[roundResultKey] > 4) {
+    row[roundSeed] = seedWithinCurrentRound + 2;
   }
 
   // handle the last heat edge since racers seeded 3-6 will just move on to next round
-  if (row.Round1Heat === lastHeat && row.Round1Result <= 2) {
-    row.Round2Seed = seedWithinCurrentRound - 2;
+  if (row[heatDataIndex] === lastHeat && row[roundResultKey] <= 2) {
+    row[roundSeed] = seedWithinCurrentRound - 2;
   }
-  if (row.Round1Heat === lastHeat && row.Round1Result > 2) {
-    row.Round2Seed = seedWithinCurrentRound;
+  if (row[heatDataIndex] === lastHeat && row[roundResultKey] > 2) {
+    row[roundSeed] = seedWithinCurrentRound;
   }
   return row;
 }
