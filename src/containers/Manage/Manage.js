@@ -93,9 +93,13 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
   }
 
   // handle all the heats between the first and the last heat
-  // racers who are the top four in the heat move up two seeds
-  if (row.Round1Heat > 1 && row.Round1Result <= 4) {
+  // racers who are the top two in the heat move up two seeds
+  if (row.Round1Heat > 1 && row.Round1Result <= 2) {
     row.Round2Seed = seedWithinCurrentRound - 2;
+  }
+  // racers who placed in the middle two retain their current seed
+  if (row.Round1Heat > 1 && row.Round1Result > 2 && row.Round1Result <= 4) {
+    row.Round2Seed = seedWithinCurrentRound;
   }
   // racers who are the last two in their heat move down two seeds
   if (row.Round1Heat > 1 && row.Round1Result > 4) {
