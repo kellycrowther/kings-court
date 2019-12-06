@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Upload, message, Button, Icon, Table, Form, Select } from "antd";
+import {
+  Upload,
+  message,
+  Button,
+  Icon,
+  Table,
+  Form,
+  Select,
+  Popconfirm,
+  Row,
+  Col
+} from "antd";
 import parse from "csv-parse";
 import { uniqBy } from "lodash";
+import "./Manage.css";
 
 var data = require("../../mocks/mock-data.json");
 
@@ -10,7 +22,6 @@ const { Option } = Select;
 let heatFilters = [];
 
 // TODO: Save results to local storage
-// TODO: Delete all results
 // TODO: Export final results to CSV
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
@@ -212,6 +223,7 @@ const columns = [
       /* set dynamically in Manage component */
     ],
     filterMultiple: false,
+    filter: true,
     onFilter: (value, record) => record.Round1Heat === value
   },
   {
@@ -250,6 +262,7 @@ const columnsRound2 = [
       /* set dynamically in Manage component */
     ],
     filterMultiple: false,
+    filter: true,
     onFilter: (value, record) => record.Round2Heat === value
   },
   {
@@ -288,6 +301,7 @@ const columnsRound3 = [
       /* set dynamically in Manage component */
     ],
     filterMultiple: false,
+    filter: true,
     onFilter: (value, record) => record.Round3Heat === value
   },
   {
@@ -417,6 +431,22 @@ class EditableCell extends React.Component {
   }
 }
 
+function DeleteButton({ setRacers }) {
+  function confirm() {
+    setRacers([]);
+  }
+  return (
+    <Popconfirm
+      title="Are you sure you want to delete all the data?"
+      onConfirm={confirm}
+      okText="Yes"
+      cancelText="No"
+    >
+      <Button type="danger">Delete</Button>
+    </Popconfirm>
+  );
+}
+
 export function Manage() {
   const [racers, setRacers] = useState([]);
 
@@ -461,7 +491,9 @@ export function Manage() {
   };
 
   const columnsEditable = columns.map(col => {
-    col.filters = heatFilters;
+    if (col.filter === true) {
+      col.filters = heatFilters;
+    }
     if (!col.editable) {
       return col;
     }
@@ -479,7 +511,9 @@ export function Manage() {
   });
 
   const columnsEditableRound2 = columnsRound2.map(col => {
-    col.filters = heatFilters;
+    if (col.filter === true) {
+      col.filters = heatFilters;
+    }
     if (!col.editable) {
       return col;
     }
@@ -497,7 +531,9 @@ export function Manage() {
   });
 
   const columnsEditableRound3 = columnsRound3.map(col => {
-    col.filters = heatFilters;
+    if (col.filter === true) {
+      col.filters = heatFilters;
+    }
     if (!col.editable) {
       return col;
     }
@@ -527,11 +563,18 @@ export function Manage() {
     <div>
       <h2>Manage</h2>
       <h3>Create Race</h3>
-      <Upload {...props}>
-        <Button>
-          <Icon type="upload" /> Click to Upload
-        </Button>
-      </Upload>
+      <Row>
+        <Col span={8}>
+          <Upload {...props}>
+            <Button>
+              <Icon type="upload" /> Click to Upload
+            </Button>
+          </Upload>
+        </Col>
+        <Col span={8} offset={8} className="delete-container">
+          <DeleteButton setRacers={setRacers} />
+        </Col>
+      </Row>
 
       <h3>Round 1</h3>
       <Table
