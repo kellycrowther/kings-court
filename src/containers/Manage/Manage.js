@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Upload, message, Button, Icon, Table, Form, Select } from "antd";
 import parse from "csv-parse";
+import { uniqBy } from "lodash";
 
 var data = require("../../mocks/mock-data.json");
 
 const { Option } = Select;
 
+let heatFilters = [];
+
 // TODO: Save results to local storage
 // TODO: Delete all results
 // TODO: Export final results to CSV
-// TODO: Filter heats
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
 function readCSV(info) {
@@ -63,6 +65,8 @@ function setHeats(csvData) {
     }
     return row;
   });
+  heatFilters = createFilterOptions(csvData);
+  console.info("ALL HEATS: ", heatFilters);
 }
 
 function setSeed(row, racers, roundResultKey, heatDataIndex) {
@@ -168,6 +172,18 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
   return row;
 }
 
+function createFilterOptions(racers) {
+  const uniqueHeats = uniqBy(racers, "Round1Heat");
+  return uniqueHeats
+    .map(racer => {
+      return {
+        text: racer.Round1Heat.toString(),
+        value: racer.Round1Heat
+      };
+    })
+    .sort((a, b) => a.value - b.value);
+}
+
 const columns = [
   {
     title: "Seed",
@@ -191,7 +207,12 @@ const columns = [
   {
     title: "Round 1 Heat",
     dataIndex: "Round1Heat",
-    sorter: (a, b) => a.Round1Heat - b.Round1Heat
+    sorter: (a, b) => a.Round1Heat - b.Round1Heat,
+    filters: [
+      /* set dynamically in Manage component */
+    ],
+    filterMultiple: false,
+    onFilter: (value, record) => record.Round1Heat === value
   },
   {
     title: "Round 1 Result",
@@ -224,7 +245,12 @@ const columnsRound2 = [
   {
     title: "Round 2 Heat",
     dataIndex: "Round2Heat",
-    sorter: (a, b) => a.Round2Heat - b.Round2Heat
+    sorter: (a, b) => a.Round2Heat - b.Round2Heat,
+    filters: [
+      /* set dynamically in Manage component */
+    ],
+    filterMultiple: false,
+    onFilter: (value, record) => record.Round2Heat === value
   },
   {
     title: "Round 2 Result",
@@ -257,7 +283,12 @@ const columnsRound3 = [
   {
     title: "Round 3 Heat",
     dataIndex: "Round3Heat",
-    sorter: (a, b) => a.Round3Heat - b.Round3Heat
+    sorter: (a, b) => a.Round3Heat - b.Round3Heat,
+    filters: [
+      /* set dynamically in Manage component */
+    ],
+    filterMultiple: false,
+    onFilter: (value, record) => record.Round3Heat === value
   },
   {
     title: "Round 3 Result",
@@ -430,6 +461,7 @@ export function Manage() {
   };
 
   const columnsEditable = columns.map(col => {
+    col.filters = heatFilters;
     if (!col.editable) {
       return col;
     }
@@ -447,6 +479,7 @@ export function Manage() {
   });
 
   const columnsEditableRound2 = columnsRound2.map(col => {
+    col.filters = heatFilters;
     if (!col.editable) {
       return col;
     }
@@ -464,6 +497,7 @@ export function Manage() {
   });
 
   const columnsEditableRound3 = columnsRound3.map(col => {
+    col.filters = heatFilters;
     if (!col.editable) {
       return col;
     }
