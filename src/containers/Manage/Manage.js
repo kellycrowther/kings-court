@@ -6,6 +6,13 @@ var data = require("../../mocks/mock-data.json");
 
 const { Option } = Select;
 
+// TODO: Save results to local storage
+// TODO: Delete all results
+// TODO: Export final results to CSV
+// TODO: Filter heats
+// TODO: Sort heats
+// BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
+
 function readCSV(info) {
   const csvData = [];
   let reader = new FileReader();
@@ -66,7 +73,7 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
     currentRoundSeedIndex = "Seed";
   } else if (heatDataIndex === "Round2Heat") {
     currentRoundSeedIndex = "Round2Seed";
-  } else if (heatDataIndex === "Round2Heat") {
+  } else if (heatDataIndex === "Round3Heat") {
     currentRoundSeedIndex = "Round3Seed";
   }
 
@@ -76,6 +83,8 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
     nextRoundSeed = "Round3Seed";
   } else if (heatDataIndex === "Round1Heat") {
     nextRoundSeed = "Round2Seed";
+  } else if (heatDataIndex === "Round3Heat") {
+    nextRoundSeed = "FinalResult";
   }
 
   // get the next round heat index
@@ -152,6 +161,10 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
   if (row[heatDataIndex] === lastHeat && row[roundResultKey] > 2) {
     row[nextRoundSeed] = seedWithinCurrentRound;
     row[nextHeatIndex] = heatWithinCurrentRound;
+  }
+  // consider creating a handler to set final results instead of hacking this
+  if (nextRoundSeed === "FinalResult") {
+    row[nextRoundSeed] = seedWithinCurrentRound;
   }
   return row;
 }
@@ -240,6 +253,25 @@ const columnsRound3 = [
     dataIndex: "Round3Result",
     heatDataIndex: "Round3Heat",
     editable: true
+  }
+];
+
+const columnsFinalResults = [
+  {
+    title: "Final Result",
+    dataIndex: "FinalResult"
+  },
+  {
+    title: "Name",
+    dataIndex: "Name"
+  },
+  {
+    title: "Gender",
+    dataIndex: "Gender"
+  },
+  {
+    title: "Team Name",
+    dataIndex: "Team name"
   }
 ];
 
@@ -481,6 +513,17 @@ export function Manage() {
         components={components}
         rowClassName={() => "editable-row"}
         columns={columnsEditableRound3}
+        dataSource={racers}
+        rowKey="Bib"
+      />
+
+      <hr />
+      <div style={{ padding: "30px" }}></div>
+      <h3>Final Results</h3>
+      <Table
+        components={components}
+        rowClassName={() => "editable-row"}
+        columns={columnsFinalResults}
         dataSource={racers}
         rowKey="Bib"
       />
