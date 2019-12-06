@@ -434,6 +434,7 @@ class EditableCell extends React.Component {
 function DeleteButton({ setRacers }) {
   function confirm() {
     setRacers([]);
+    localStorage.removeItem("racers");
   }
   return (
     <Popconfirm
@@ -447,13 +448,31 @@ function DeleteButton({ setRacers }) {
   );
 }
 
+function SaveButton({ racers }) {
+  function save() {
+    localStorage.setItem("racers", JSON.stringify(racers));
+  }
+
+  return (
+    <Button onClick={save} type="primary">
+      Save
+    </Button>
+  );
+}
+
 export function Manage() {
   const [racers, setRacers] = useState([]);
 
-  // Load mock data
   useEffect(() => {
-    setHeats(data);
-    setRacers(data);
+    // retrieve data from local storage
+    let savedRacers = localStorage.getItem("racers");
+    savedRacers = JSON.parse(savedRacers);
+    if (savedRacers) {
+      setRacers(savedRacers);
+    }
+    // Load mock data
+    // setHeats(data);
+    // setRacers(data);
   }, []);
 
   const props = {
@@ -570,6 +589,7 @@ export function Manage() {
               <Icon type="upload" /> Click to Upload
             </Button>
           </Upload>
+          <SaveButton racers={racers} />
         </Col>
         <Col span={8} offset={8} className="delete-container">
           <DeleteButton setRacers={setRacers} />
