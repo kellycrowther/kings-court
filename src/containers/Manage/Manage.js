@@ -10,7 +10,6 @@ const { Option } = Select;
 // TODO: Delete all results
 // TODO: Export final results to CSV
 // TODO: Filter heats
-// TODO: Sort heats
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
 function readCSV(info) {
@@ -172,7 +171,8 @@ function setSeed(row, racers, roundResultKey, heatDataIndex) {
 const columns = [
   {
     title: "Seed",
-    dataIndex: "Seed"
+    dataIndex: "Seed",
+    sorter: (a, b) => a.Seed - b.Seed
   },
   {
     title: "Name",
@@ -180,15 +180,18 @@ const columns = [
   },
   {
     title: "Gender",
-    dataIndex: "Gender"
+    dataIndex: "Gender",
+    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
   },
   {
     title: "Team Name",
-    dataIndex: "Team name"
+    dataIndex: "Team name",
+    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
   },
   {
     title: "Round 1 Heat",
-    dataIndex: "Round1Heat"
+    dataIndex: "Round1Heat",
+    sorter: (a, b) => a.Round1Heat - b.Round1Heat
   },
   {
     title: "Round 1 Result",
@@ -201,7 +204,8 @@ const columns = [
 const columnsRound2 = [
   {
     title: "Seed",
-    dataIndex: "Round2Seed"
+    dataIndex: "Round2Seed",
+    sorter: (a, b) => a.Round2Seed - b.Round2Seed
   },
   {
     title: "Name",
@@ -209,15 +213,18 @@ const columnsRound2 = [
   },
   {
     title: "Gender",
-    dataIndex: "Gender"
+    dataIndex: "Gender",
+    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
   },
   {
     title: "Team Name",
-    dataIndex: "Team name"
+    dataIndex: "Team name",
+    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
   },
   {
     title: "Round 2 Heat",
-    dataIndex: "Round2Heat"
+    dataIndex: "Round2Heat",
+    sorter: (a, b) => a.Round2Heat - b.Round2Heat
   },
   {
     title: "Round 2 Result",
@@ -230,7 +237,8 @@ const columnsRound2 = [
 const columnsRound3 = [
   {
     title: "Seed",
-    dataIndex: "Round3Seed"
+    dataIndex: "Round3Seed",
+    sorter: (a, b) => a.Round3Seed - b.Round3Seed
   },
   {
     title: "Name",
@@ -238,15 +246,18 @@ const columnsRound3 = [
   },
   {
     title: "Gender",
-    dataIndex: "Gender"
+    dataIndex: "Gender",
+    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
   },
   {
     title: "Team Name",
-    dataIndex: "Team name"
+    dataIndex: "Team name",
+    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
   },
   {
     title: "Round 3 Heat",
-    dataIndex: "Round3Heat"
+    dataIndex: "Round3Heat",
+    sorter: (a, b) => a.Round3Heat - b.Round3Heat
   },
   {
     title: "Round 3 Result",
@@ -259,7 +270,8 @@ const columnsRound3 = [
 const columnsFinalResults = [
   {
     title: "Final Result",
-    dataIndex: "FinalResult"
+    dataIndex: "FinalResult",
+    sorter: (a, b) => a.FinalResult - b.FinalResult
   },
   {
     title: "Name",
@@ -267,7 +279,8 @@ const columnsFinalResults = [
   },
   {
     title: "Gender",
-    dataIndex: "Gender"
+    dataIndex: "Gender",
+    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
   },
   {
     title: "Team Name",
