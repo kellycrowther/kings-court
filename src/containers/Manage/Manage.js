@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withRouter } from "react-router-dom";
-import {
-  Upload,
-  message,
-  Button,
-  Icon,
-  Table,
-  Form,
-  Select,
-  Popconfirm,
-  Row,
-  Col
-} from "antd";
+import { Button, Icon, Table, Form, Select, Popconfirm, Row, Col } from "antd";
 import { CSVLink } from "react-csv";
 import parse from "csv-parse";
 import { uniqBy } from "lodash";
@@ -36,7 +25,7 @@ function readCSV(info) {
   let reader = new FileReader();
   // need promise to ensure program doesn't continuing executing without having processed the data
   return new Promise(resolve => {
-    reader.readAsText(info.file.originFileObj);
+    reader.readAsText(info);
     reader.onload = e => {
       const result = e.target.result;
       parse(result, {
@@ -466,6 +455,17 @@ function SaveButton({ racers }) {
   );
 }
 
+function SelectFile({ inputFile }) {
+  function handleSelect(info) {
+    inputFile.current.click();
+  }
+  return (
+    <Button onClick={handleSelect}>
+      <Icon type="upload" /> Click to Upload
+    </Button>
+  );
+}
+
 function Manage({ history }) {
   const [racers, setRacers] = useState([]);
 
@@ -487,27 +487,6 @@ function Manage({ history }) {
       save(racers);
     };
   }, [racers, history]);
-
-  const props = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    accept: ".csv",
-    headers: {
-      authorization: "authorization-text"
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        readCSV(info).then(csvData => {
-          setRacers(csvData);
-        });
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-  };
 
   const handleSave = (row, dataIndex, heatDataIndex) => {
     const index = racers.findIndex(item => row.Bib === item.Bib);
@@ -589,6 +568,17 @@ function Manage({ history }) {
     }
   };
 
+  const inputFile = useRef(null);
+
+  function onChangeFile(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var file = event.target.files[0];
+    readCSV(file).then(csvData => {
+      setRacers(csvData);
+    });
+  }
+
   console.info("RACERS: ", racers);
 
   return (
@@ -597,11 +587,14 @@ function Manage({ history }) {
       <h3>Create Race</h3>
       <Row>
         <Col span={8} className="manage--create-btns">
-          <Upload {...props}>
-            <Button>
-              <Icon type="upload" /> Click to Upload
-            </Button>
-          </Upload>
+          <SelectFile inputFile={inputFile} />
+          <input
+            type="file"
+            id="file"
+            ref={inputFile}
+            onChange={onChangeFile}
+            style={{ display: "none" }}
+          />
           <SaveButton racers={racers} />
         </Col>
         <Col span={8} offset={8} className="delete-container">
