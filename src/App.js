@@ -55,7 +55,7 @@ export default function BasicExample() {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Ant Design ©2018 Created by Ant UED
+          kellycrowther.io ©{new Date().getFullYear()} Created by Kelly Crowther
         </Footer>
       </Router>
     </Layout>
@@ -69,6 +69,12 @@ function Home() {
   return (
     <div>
       <h2>Home</h2>
+      <p>
+        Head over to the Manage page for the magic.{" "}
+        <span role="img" aria-label="sparkles">
+          🎇
+        </span>
+      </p>
     </div>
   );
 }
@@ -77,6 +83,12 @@ function Results() {
   return (
     <div>
       <h2>Results</h2>
+      <p>
+        For now, results are in the last table on the Manage page.{" "}
+        <span role="img" aria-label="negative graph">
+          📉
+        </span>
+      </p>
     </div>
   );
 }
