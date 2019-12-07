@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
 import {
   Upload,
   message,
@@ -15,13 +16,10 @@ import parse from "csv-parse";
 import { uniqBy } from "lodash";
 import "./Manage.css";
 
-var data = require("../../mocks/mock-data.json");
-
 const { Option } = Select;
 
 let heatFilters = [];
 
-// TODO: Save results to local storage
 // TODO: Export final results to CSV
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
@@ -448,19 +446,19 @@ function DeleteButton({ setRacers }) {
   );
 }
 
-function SaveButton({ racers }) {
-  function save() {
-    localStorage.setItem("racers", JSON.stringify(racers));
-  }
+const save = racers => {
+  localStorage.setItem("racers", JSON.stringify(racers));
+};
 
+function SaveButton({ racers }) {
   return (
-    <Button onClick={save} type="primary">
+    <Button onClick={() => save(racers)} type="primary" className="save-button">
       Save
     </Button>
   );
 }
 
-export function Manage() {
+function Manage({ history }) {
   const [racers, setRacers] = useState([]);
 
   useEffect(() => {
@@ -470,10 +468,17 @@ export function Manage() {
     if (savedRacers) {
       setRacers(savedRacers);
     }
-    // Load mock data
-    // setHeats(data);
-    // setRacers(data);
   }, []);
+
+  // listen for navigation and page refresh changes and save the racers
+  useEffect(() => {
+    history.listen(() => {
+      save(racers);
+    });
+    window.onbeforeunload = () => {
+      save(racers);
+    };
+  }, [racers, history]);
 
   const props = {
     name: "file",
@@ -583,7 +588,7 @@ export function Manage() {
       <h2>Manage</h2>
       <h3>Create Race</h3>
       <Row>
-        <Col span={8}>
+        <Col span={8} className="manage--create-btns">
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
@@ -640,3 +645,5 @@ export function Manage() {
     </div>
   );
 }
+
+export default withRouter(Manage);

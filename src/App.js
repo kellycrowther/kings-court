@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Menu, Icon, Breadcrumb, Layout } from "antd";
-import { Manage } from "./containers/Manage/Manage";
+import Manage from "./containers/Manage/Manage";
 
 const { Header, Content, Footer } = Layout;
 

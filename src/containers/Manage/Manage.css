@@ -1,3 +1,11 @@
+.manage--create-btns {
+  display: flex;
+}
+
+.save-button {
+  margin-left: 5px;
+}
+
 .delete-container {
   text-align: right;
 }
