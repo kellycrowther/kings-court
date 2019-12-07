@@ -12,6 +12,7 @@ import {
   Row,
   Col
 } from "antd";
+import { CSVLink } from "react-csv";
 import parse from "csv-parse";
 import { uniqBy } from "lodash";
 import "./Manage.css";
@@ -21,6 +22,13 @@ const { Option } = Select;
 let heatFilters = [];
 
 // TODO: Export final results to CSV
+// TODO: DNS or no shows
+// TODO: DNF
+// TODO: Ties
+// TODO: When exporting final results, just include the necessary data
+// TODO: message on save
+// TODO: make button to finalize round results and display next table
+// BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
 function readCSV(info) {
@@ -600,7 +608,6 @@ function Manage({ history }) {
           <DeleteButton setRacers={setRacers} />
         </Col>
       </Row>
-
       <h3>Round 1</h3>
       <Table
         components={components}
@@ -609,7 +616,6 @@ function Manage({ history }) {
         dataSource={racers}
         rowKey="Bib"
       />
-
       <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Round 2</h3>
@@ -620,7 +626,6 @@ function Manage({ history }) {
         dataSource={racers}
         rowKey="Bib"
       />
-
       <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Round 3</h3>
@@ -631,7 +636,6 @@ function Manage({ history }) {
         dataSource={racers}
         rowKey="Bib"
       />
-
       <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Final Results</h3>
@@ -642,6 +646,11 @@ function Manage({ history }) {
         dataSource={racers}
         rowKey="Bib"
       />
+      <CSVLink filename={"final-results.csv"} data={racers}>
+        <Button>
+          <Icon type="download" /> Download Final Results
+        </Button>
+      </CSVLink>
     </div>
   );
 }
