@@ -1,8 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Menu, Icon, Breadcrumb, Layout } from "antd";
-import Manage from "./containers/Manage/Manage";
 import "./App.css";
+import { Button } from "antd";
+import socketIOClient from "socket.io-client";
+
+import Manage from "./containers/Manage/Manage";
+import Results from "./containers/Results/Results";
 
 const { Header, Content, Footer } = Layout;
 
@@ -74,20 +78,6 @@ function Home() {
         Head over to the Manage page for the magic.{" "}
         <span role="img" aria-label="sparkles">
           🎇
-        </span>
-      </p>
-    </div>
-  );
-}
-
-function Results() {
-  return (
-    <div>
-      <h2>Results</h2>
-      <p>
-        For now, results are in the last table on the Manage page.{" "}
-        <span role="img" aria-label="negative graph">
-          📉
         </span>
       </p>
     </div>

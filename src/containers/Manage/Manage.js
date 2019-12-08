@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { Button, Icon, Table, Form, Select, Popconfirm, Row, Col } from "antd";
 import { CSVLink } from "react-csv";
 import parse from "csv-parse";
+import socketIOClient from "socket.io-client";
 import { uniqBy } from "lodash";
 import "./Manage.css";
 
@@ -188,6 +189,12 @@ function createFilterOptions(racers) {
       };
     })
     .sort((a, b) => a.value - b.value);
+}
+
+function emitResults(racers) {
+  const endpoint = "http://127.0.0.1:4001";
+  const socket = socketIOClient(endpoint);
+  socket.emit("incoming-data", racers);
 }
 
 const columns = [
@@ -499,6 +506,7 @@ function Manage({ history }) {
       heatDataIndex
     );
     setRacers(editRacers);
+    emitResults(editRacers);
   };
 
   const columnsEditable = columns.map(col => {
