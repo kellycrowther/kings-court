@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Menu, Icon, Breadcrumb, Layout } from "antd";
 import Manage from "./containers/Manage/Manage";
+import "./App.css";
 
 const { Header, Content, Footer } = Layout;
 
@@ -9,7 +10,7 @@ export default function BasicExample() {
   return (
     <Layout className="layout">
       <Router>
-        <Header>
+        <Header className="custom-header">
           <div className="logo" />
           <Menu
             theme="dark"
@@ -34,7 +35,7 @@ export default function BasicExample() {
             </Menu.Item>
           </Menu>
         </Header>
-        <Content style={{ padding: "0 50px" }}>
+        <Content className="content">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>List</Breadcrumb.Item>

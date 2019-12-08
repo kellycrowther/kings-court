@@ -379,7 +379,7 @@ class EditableCell extends React.Component {
             ref={node => (this.input = node)}
             onSelect={event => this.save(event, dataIndex, heatDataIndex)}
             onBlur={event => this.save(event, dataIndex, heatDataIndex)}
-            style={{ width: 120 }}
+            style={{ width: 80 }}
           >
             <Option value={1}>1</Option>
             <Option value={2}>2</Option>
@@ -607,6 +607,7 @@ function Manage({ history }) {
         rowClassName={() => "editable-row"}
         columns={columnsEditable}
         dataSource={racers}
+        scroll={{ x: 650 }}
         rowKey="Bib"
       />
       <hr />
@@ -617,6 +618,7 @@ function Manage({ history }) {
         rowClassName={() => "editable-row"}
         columns={columnsEditableRound2}
         dataSource={racers}
+        scroll={{ x: 650 }}
         rowKey="Bib"
       />
       <hr />
@@ -627,6 +629,7 @@ function Manage({ history }) {
         rowClassName={() => "editable-row"}
         columns={columnsEditableRound3}
         dataSource={racers}
+        scroll={{ x: 650 }}
         rowKey="Bib"
       />
       <hr />
@@ -637,6 +640,7 @@ function Manage({ history }) {
         rowClassName={() => "editable-row"}
         columns={columnsFinalResults}
         dataSource={racers}
+        scroll={{ x: 650 }}
         rowKey="Bib"
       />
       <CSVLink filename={"final-results.csv"} data={racers}>
