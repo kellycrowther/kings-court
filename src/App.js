@@ -1,16 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Menu, Icon, Breadcrumb, Layout } from "antd";
+import { Menu, Icon, Breadcrumb, Layout, message } from "antd";
 import "./App.css";
-import { Button } from "antd";
-import socketIOClient from "socket.io-client";
 
 import Manage from "./containers/Manage/Manage";
 import Results from "./containers/Results/Results";
+import LoginModal from "./components/LoginModal/LoginModal";
 
 const { Header, Content, Footer } = Layout;
 
 export default function BasicExample() {
+  const [loginVisible, setLoginVisible] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = password => {
+    if (password === "b^oGL0XY5tei") {
+      setIsLoggedIn(true);
+      localStorage.setItem("isLoggedIn", JSON.stringify(true));
+      message.success("You have been successfully logged in.");
+    } else {
+      message.error("The password you entered was incorrect.");
+    }
+  };
+
+  useEffect(() => {
+    let storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+    storedIsLoggedIn = JSON.parse(storedIsLoggedIn);
+    console.info("stored is logged", storedIsLoggedIn);
+    setIsLoggedIn(storedIsLoggedIn);
+  }, []);
+
   return (
     <Layout className="layout">
       <Router>
@@ -27,15 +46,22 @@ export default function BasicExample() {
               Home
               <Link to="/"></Link>
             </Menu.Item>
-            <Menu.Item>
-              <Icon type="database" />
-              Manage
-              <Link to="/manage"></Link>
-            </Menu.Item>
+            {isLoggedIn ? (
+              <Menu.Item>
+                <Icon type="database" />
+                Manage
+                <Link to="/manage"></Link>
+              </Menu.Item>
+            ) : null}
             <Menu.Item>
               <Icon type="dashboard" />
               Results
               <Link to="/results"></Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Icon type="login" />
+              Login
+              <Link onClick={() => setLoginVisible(true)}></Link>
             </Menu.Item>
           </Menu>
         </Header>
@@ -58,6 +84,11 @@ export default function BasicExample() {
               </Route>
             </Switch>
           </div>
+          <LoginModal
+            visible={loginVisible}
+            setLoginVisible={setLoginVisible}
+            handleLogin={handleLogin}
+          />
         </Content>
         <Footer style={{ textAlign: "center" }}>
           kellycrowther.io ©{new Date().getFullYear()} Created by Kelly Crowther
@@ -66,9 +97,6 @@ export default function BasicExample() {
     </Layout>
   );
 }
-
-// You can think of these components as "pages"
-// in your app.
 
 function Home() {
   return (
@@ -80,6 +108,7 @@ function Home() {
           🎇
         </span>
       </p>
+      <p>The password to login is: b^oGL0XY5tei</p>
     </div>
   );
 }
