@@ -18,6 +18,7 @@ let heatFilters = [];
 // TODO: When exporting final results, just include the necessary data
 // TODO: message on save
 // TODO: make button to finalize round results and display next table
+// TODO: Error handling for failed csv parse
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 
