@@ -21,6 +21,7 @@ let heatFilters = [];
 // TODO: Error handling for failed csv parse
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
+// BUG: delete and save do not push new data through websocket
 
 function readCSV(info) {
   const csvData = [];
@@ -193,7 +194,8 @@ function createFilterOptions(racers) {
 }
 
 function emitResults(racers) {
-  const endpoint = "http://127.0.0.1:4001";
+  // const endpoint = "http://127.0.0.1:4001";
+  const endpoint = "http://34.223.91.61:4001";
   const socket = socketIOClient(endpoint);
   socket.emit("incoming-data", racers);
 }

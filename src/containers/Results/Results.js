@@ -5,7 +5,8 @@ import ResultsTables from "../../components/ResultsTables/ResultsTables";
 
 export default function Results() {
   const [racers, setRacers] = useState([]);
-  const endpoint = "http://127.0.0.1:4001";
+  // const endpoint = "http://127.0.0.1:4001";
+  const endpoint = "http://34.223.91.61:4001";
   const socket = socketIOClient(endpoint);
 
   function sendSocketData() {
