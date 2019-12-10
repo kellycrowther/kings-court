@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Menu, Icon, Breadcrumb, Layout, message } from "antd";
+import { Menu, Icon, Breadcrumb, Layout, message, Typography } from "antd";
 import "./App.css";
 
 import Manage from "./containers/Manage/Manage";
@@ -8,13 +8,14 @@ import Results from "./containers/Results/Results";
 import LoginModal from "./components/LoginModal/LoginModal";
 
 const { Header, Content, Footer } = Layout;
+const { Paragraph } = Typography;
 
 export default function BasicExample() {
   const [loginVisible, setLoginVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = password => {
-    if (password === "b^oGL0XY5tei") {
+    if (password === "bMoGL4XY5tei") {
       setIsLoggedIn(true);
       localStorage.setItem("isLoggedIn", JSON.stringify(true));
       message.success("You have been successfully logged in.");
@@ -58,10 +59,9 @@ export default function BasicExample() {
               Results
               <Link to="/results"></Link>
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item onClick={() => setLoginVisible(true)}>
               <Icon type="login" />
               Login
-              <Link onClick={() => setLoginVisible(true)}></Link>
             </Menu.Item>
           </Menu>
         </Header>
@@ -108,7 +108,9 @@ function Home() {
           🎇
         </span>
       </p>
-      <p>The password to login is: b^oGL0XY5tei</p>
+      <div>
+        The password to login is: <Paragraph copyable>bMoGL4XY5tei</Paragraph>
+      </div>
     </div>
   );
 }

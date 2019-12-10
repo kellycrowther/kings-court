@@ -19,6 +19,7 @@ let heatFilters = [];
 // TODO: message on save
 // TODO: make button to finalize round results and display next table
 // TODO: Error handling for failed csv parse
+// TODO: Add search for racer name
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer
 // BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
 // BUG: delete and save do not push new data through websocket
@@ -30,15 +31,26 @@ function readCSV(info) {
   return new Promise(resolve => {
     reader.readAsText(info);
     reader.onload = e => {
-      const result = e.target.result;
+      let result = e.target.result;
+      // ipad Numbers adds extra lines - this removes them to normalize it
+      if (result.includes(",,,,,,,,,")) {
+        result = result.replace(",,,,,,,,,", "");
+      }
       parse(result, {
         delimiter: ",",
         columns: true,
+        skip_empty_lines: true,
+        skip_lines_with_empty_values: true,
+        skip_lines_with_error: true,
+        bom: true,
         from_line: 2
       })
         .on("data", function(csvrow) {
           // do something with csvrow
           csvData.push(csvrow);
+        })
+        .on("error", function(error) {
+          console.error("Manage->readCSV()->error", error);
         })
         .on("end", function() {
           // do something with csvData
@@ -75,7 +87,6 @@ function setHeats(csvData) {
     return row;
   });
   heatFilters = createFilterOptions(csvData);
-  console.info("ALL HEATS: ", heatFilters);
 }
 
 function setSeed(row, racers, roundResultKey, heatDataIndex) {
@@ -590,7 +601,7 @@ function Manage({ history }) {
     });
   }
 
-  console.info("RACERS: ", racers);
+  console.info("Manage->racers", racers);
 
   return (
     <div>

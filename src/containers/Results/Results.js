@@ -9,18 +9,16 @@ export default function Results() {
   const endpoint = "http://34.223.91.61:4001";
   const socket = socketIOClient(endpoint);
 
-  function sendSocketData() {
+  useEffect(() => {
     socket.on("outgoing-data", data => {
-      console.info("DATA: ", data);
+      console.info("Results->init: ", data);
       setRacers(data.racers);
     });
-  }
-  useEffect(() => {
-    sendSocketData();
 
     return () => {
       socket.off("disconnected");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
