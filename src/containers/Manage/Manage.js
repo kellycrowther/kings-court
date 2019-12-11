@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withRouter } from "react-router-dom";
-import { Button, Icon, Table, Form, Select, Popconfirm, Row, Col } from "antd";
+import {
+  Button,
+  Icon,
+  Table,
+  Form,
+  Select,
+  Popconfirm,
+  Row,
+  Col,
+  message
+} from "antd";
 import { CSVLink } from "react-csv";
-import parse from "csv-parse";
+import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import { uniqBy } from "lodash";
 import "./Manage.css";
@@ -25,39 +35,33 @@ let heatFilters = [];
 // BUG: delete and save do not push new data through websocket
 
 function readCSV(info) {
-  const csvData = [];
   let reader = new FileReader();
   // need promise to ensure program doesn't continuing executing without having processed the data
   return new Promise(resolve => {
     reader.readAsText(info);
     reader.onload = e => {
-      let result = e.target.result;
       // ipad Numbers adds extra lines - this removes them to normalize it
+      let result = e.target.result;
+      if (result.includes("Table 1,,,,,,,,,")) {
+        result = result.replace("Table 1,,,,,,,,,", "");
+      }
       if (result.includes(",,,,,,,,,")) {
         result = result.replace(",,,,,,,,,", "");
       }
-      parse(result, {
-        delimiter: ",",
+      const csvData = Papa.parse(result, {
+        dynamicTyping: true,
         columns: true,
-        skip_empty_lines: true,
-        skip_lines_with_empty_values: true,
-        skip_lines_with_error: true,
-        bom: true,
-        from_line: 2
-      })
-        .on("data", function(csvrow) {
-          // do something with csvrow
-          csvData.push(csvrow);
-        })
-        .on("error", function(error) {
-          console.error("Manage->readCSV()->error", error);
-        })
-        .on("end", function() {
-          // do something with csvData
-          // console.log(csvData);
-          setHeats(csvData);
-          resolve(csvData);
-        });
+        skipEmptyLines: true,
+        header: true
+      });
+      if (csvData.errors.length > 0) {
+        message.error(
+          "There was a problem uploading the CSV. Make sure the CSV is in the correct format. Only include column headers and associated data.",
+          5
+        );
+      }
+      setHeats(csvData.data);
+      resolve(csvData.data);
     };
   });
 }
