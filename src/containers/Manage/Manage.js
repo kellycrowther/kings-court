@@ -18,27 +18,30 @@ import "./Manage.css";
 
 const { Option } = Select;
 const { Parser } = require("json2csv");
+// const endpoint = "http://127.0.0.1:4001";
+const endpoint = "http://34.223.91.61:4001";
+const socket = socketIOClient(endpoint);
 
 let heatFilters = [];
 
-// TODO: Export final results to CSV
 // TODO: DNS or no shows
 // TODO: DNF
 // TODO: Ties
-// TODO: When exporting final results, just include the necessary data
-// TODO: message on save
 // TODO: make button to finalize round results and display next table
-// TODO: Error handling for failed csv parse
 // TODO: Add search for racer name
-// BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer
-// BUG: When not selecting places in order (choose place 5 before, place 4 as been selected), getting type error: TypeError: Cannot read property 'Round2Seed' of undefined
-// BUG: delete and save do not push new data through websocket
+// BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 
 function readCSV(info) {
   let reader = new FileReader();
   // need promise to ensure program doesn't continuing executing without having processed the data
   return new Promise(resolve => {
-    reader.readAsText(info);
+    reader.addEventListener("error", () => {
+      message.error(
+        "There was a problem uploading the CSV. Refresh the page and try again."
+      );
+      console.error("Manage->readCSV()->error");
+      reader.abort();
+    });
     reader.onload = e => {
       // ipad Numbers adds extra lines - this removes them to normalize it
       let result = e.target.result;
@@ -56,13 +59,14 @@ function readCSV(info) {
       });
       if (csvData.errors.length > 0) {
         message.error(
-          "There was a problem uploading the CSV. Make sure the CSV is in the correct format. Only include column headers and associated data.",
+          "There was a problem parsing the CSV. Make sure the CSV is in the correct format. Only include column headers and associated data.",
           5
         );
       }
       setHeats(csvData.data);
       resolve(csvData.data);
     };
+    reader.readAsText(info);
   });
 }
 
@@ -209,9 +213,6 @@ function createFilterOptions(racers) {
 }
 
 function emitResults(racers) {
-  // const endpoint = "http://127.0.0.1:4001";
-  const endpoint = "http://34.223.91.61:4001";
-  const socket = socketIOClient(endpoint);
   socket.emit("incoming-data", racers);
 }
 
@@ -455,6 +456,7 @@ function DeleteButton({ setRacers }) {
   function confirm() {
     setRacers([]);
     localStorage.removeItem("racers");
+    socket.emit("incoming-data", []);
   }
   return (
     <Popconfirm
@@ -468,8 +470,12 @@ function DeleteButton({ setRacers }) {
   );
 }
 
-const save = racers => {
+const save = (racers, isMessage = true) => {
   localStorage.setItem("racers", JSON.stringify(racers));
+  socket.emit("incoming-data", racers);
+  if (isMessage) {
+    message.success("Successfully saved data!");
+  }
 };
 
 function SaveButton({ racers }) {
@@ -517,10 +523,10 @@ function Manage({ history }) {
   // listen for navigation and page refresh changes and save the racers
   useEffect(() => {
     history.listen(() => {
-      save(racers);
+      save(racers, false);
     });
     window.onbeforeunload = () => {
-      save(racers);
+      save(racers, false);
     };
   }, [racers, history]);
 
@@ -628,6 +634,7 @@ function Manage({ history }) {
           <input
             type="file"
             id="file"
+            accept=".csv, text/csv"
             ref={inputFile}
             onChange={onChangeFile}
             style={{ display: "none" }}
@@ -647,9 +654,12 @@ function Manage({ history }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Round 2</h3>
+      <Row>
+        <Col span={8} className="round-header">
+          <h3>Round 2</h3>
+          <SaveButton racers={racers} />
+        </Col>
+      </Row>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
@@ -658,9 +668,12 @@ function Manage({ history }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Round 3</h3>
+      <Row>
+        <Col span={8} className="round-header">
+          <h3>Round 3</h3>
+          <SaveButton racers={racers} />
+        </Col>
+      </Row>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
@@ -669,9 +682,12 @@ function Manage({ history }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Final Results</h3>
+      <Row>
+        <Col span={8} className="round-header">
+          <h3>Final Results</h3>
+          <SaveButton racers={racers} />
+        </Col>
+      </Row>
       <Table
         components={components}
         rowClassName={() => "editable-row"}
@@ -680,7 +696,7 @@ function Manage({ history }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <Button onClick={downloadCSV}>
+      <Button onClick={downloadCSV} type="primary">
         <Icon type="download" /> Download Final Results
       </Button>
     </div>

@@ -149,7 +149,6 @@ export default function ResultsTables({ racers }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Round 2</h3>
       <Table
@@ -158,7 +157,6 @@ export default function ResultsTables({ racers }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Round 3</h3>
       <Table
@@ -167,7 +165,6 @@ export default function ResultsTables({ racers }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <hr />
       <div style={{ padding: "30px" }}></div>
       <h3>Final Results</h3>
       <Table

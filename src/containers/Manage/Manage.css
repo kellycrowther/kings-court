@@ -9,3 +9,14 @@
 .delete-container {
   text-align: right;
 }
+
+.round-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.round-header .save-button {
+  margin-left: 0px;
+  max-width: 5rem;
+}
