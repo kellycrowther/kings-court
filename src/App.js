@@ -27,7 +27,6 @@ export default function BasicExample() {
   useEffect(() => {
     let storedIsLoggedIn = localStorage.getItem("isLoggedIn");
     storedIsLoggedIn = JSON.parse(storedIsLoggedIn);
-    console.info("stored is logged", storedIsLoggedIn);
     setIsLoggedIn(storedIsLoggedIn);
   }, []);
 

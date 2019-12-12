@@ -11,13 +11,13 @@ import {
   Col,
   message
 } from "antd";
-import { CSVLink } from "react-csv";
 import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import { uniqBy } from "lodash";
 import "./Manage.css";
 
 const { Option } = Select;
+const { Parser } = require("json2csv");
 
 let heatFilters = [];
 
@@ -494,6 +494,17 @@ function SelectFile({ inputFile }) {
 function Manage({ history }) {
   const [racers, setRacers] = useState([]);
 
+  function downloadCSV() {
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(racers);
+    let hiddenElement = document.createElement("a");
+    // important to use URI and not blob so Safari iPad works
+    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    hiddenElement.target = "_blank";
+    hiddenElement.download = "final-results.csv";
+    hiddenElement.click();
+  }
+
   useEffect(() => {
     // retrieve data from local storage
     let savedRacers = localStorage.getItem("racers");
@@ -669,11 +680,9 @@ function Manage({ history }) {
         scroll={{ x: 650 }}
         rowKey="Bib"
       />
-      <CSVLink filename={"final-results.csv"} data={racers}>
-        <Button>
-          <Icon type="download" /> Download Final Results
-        </Button>
-      </CSVLink>
+      <Button onClick={downloadCSV}>
+        <Icon type="download" /> Download Final Results
+      </Button>
     </div>
   );
 }
