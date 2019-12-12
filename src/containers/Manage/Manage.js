@@ -28,7 +28,7 @@ let heatFilters = [];
 // TODO: DNF
 // TODO: Ties
 // TODO: make button to finalize round results and display next table
-// TODO: Add search for racer name
+// TODO: Add search for racer name on manage page
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 
 function readCSV(info) {
