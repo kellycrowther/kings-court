@@ -9,8 +9,7 @@ export default function Results() {
   const [racers, setRacers] = useState([]);
   const [filteredRacers, setFilteredRacers] = useState([]);
 
-  // const endpoint = "http://127.0.0.1:4001";
-  const endpoint = "http://34.223.91.61:4001";
+  const endpoint = process.env.REACT_APP_API_ENDPOINT;
   const socket = socketIOClient(endpoint);
 
   useEffect(() => {

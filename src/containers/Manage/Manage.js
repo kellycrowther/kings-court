@@ -18,8 +18,7 @@ import "./Manage.css";
 
 const { Option } = Select;
 const { Parser } = require("json2csv");
-// const endpoint = "http://127.0.0.1:4001";
-const endpoint = "http://34.223.91.61:4001";
+const endpoint = process.env.REACT_APP_API_ENDPOINT;
 const socket = socketIOClient(endpoint);
 
 let heatFilters = [];
@@ -30,6 +29,8 @@ let heatFilters = [];
 // TODO: make button to finalize round results and display next table
 // TODO: Add search for racer name on manage page
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
+// TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
+// TODO: need environment file
 
 function readCSV(info) {
   let reader = new FileReader();
