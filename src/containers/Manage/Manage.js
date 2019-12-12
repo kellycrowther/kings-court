@@ -15,7 +15,6 @@ import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import { uniqBy } from "lodash";
 import "./Manage.css";
-import Column from "antd/lib/table/Column";
 
 const { Option } = Select;
 const { Parser } = require("json2csv");
@@ -218,25 +217,163 @@ function emitResults(racers) {
   socket.emit("incoming-data", racers);
 }
 
+// const rounds = [
+//   {
+//     dataIndex: "Seed",
+//     title: "Seed",
+//     heatTitle: "Round 1 Heat",
+//     heatDataIndex: "Round1Heat",
+//     resultTitle: "Round 1 Result",
+//     resultDataIndex: "Round1Result"
+//   }
+// {
+//   dataIndex: "Round2Seed",
+//   title: "Round 2 Seed",
+//   heatTitle: "Round 2 Heat",
+//   heatDataIndex: "Round2Heat",
+//   resultTitle: "Round 2 Result",
+//   resultDataIndex: "Round2Result"
+// },
+// {
+//   dataIndex: "Round3Seed",
+//   title: "Round 3 Seed",
+//   heatTitle: "Round 3 Heat",
+//   heatDataIndex: "Round3Heat",
+//   resultTitle: "Round 3 Result",
+//   resultDataIndex: "Round3Result"
+// }
+// ];
+
+// const dynamicColumns = [
+//   {
+//     title: "Seed",
+//     dataIndex: "",
+//     key: "seed"
+//   },
+//   {
+//     title: "Name",
+//     dataIndex: "Name",
+//     key: "name"
+//   },
+//   {
+//     title: "Gender",
+//     dataIndex: "Gender",
+//     key: "gender"
+//   },
+//   {
+//     title: "Team Name",
+//     dataIndex: "Team name",
+//     key: "teamName"
+//   },
+//   {
+//     title: "",
+//     dataIndex: "",
+//     filters: [
+//       /* set dynamically in Manage component */
+//     ],
+//     filterMultiple: false,
+//     filter: true,
+//     key: "heat"
+//   },
+//   {
+//     title: "",
+//     dataIndex: "",
+//     heatDataIndex: "",
+//     editable: true,
+//     key: "result"
+//   }
+// ];
+
+class ResultColumn {
+  constructor(title, dataIndex, sortable, filterable, editable) {
+    this.title = title;
+    this.dataIndex = dataIndex;
+    this.filters = [];
+    this.filterMultiple = false;
+    this.filterable = filterable;
+    this.editable = editable;
+    this.key = title;
+
+    if (sortable) {
+      this.sorter = (a, b) => {
+        if (isNaN(a[this.dataIndex])) {
+          return a[this.dataIndex].localeCompare(b[this.dataIndex]);
+        } else {
+          return a[this.dataIndex] - b[this.dataIndex];
+        }
+      };
+    }
+
+    if (this.filterable) {
+      this.onFilter = (value, record) => record[dataIndex] === value;
+    }
+  }
+}
+
+const rounds = [
+  {
+    name: "Round 1",
+    columns: [],
+    key: "round-1"
+  }
+];
+
+function createColumns() {
+  for (let round of rounds) {
+    round.columns = [];
+    const seedCol = new ResultColumn("Seed", "Seed", true, false, false);
+    const nameCol = new ResultColumn("Name", "Name", false, false, false);
+    const genderCol = new ResultColumn("Gender", "Gender", true, false, false);
+    const teamCol = new ResultColumn(
+      "Team Name",
+      "Team name",
+      true,
+      false,
+      false
+    );
+    round.columns.push(seedCol, nameCol, genderCol, teamCol);
+  }
+}
+
+function createTables(racers) {
+  createColumns();
+  const tables = [];
+  for (let round of rounds) {
+    tables.push(
+      <Table
+        dataSource={racers}
+        columns={round.columns}
+        rowKey="Bib"
+        key={round.key}
+      />
+    );
+  }
+  return tables;
+}
+
 const columns = [
   {
     title: "Seed",
     dataIndex: "Seed",
-    sorter: (a, b) => a.Seed - b.Seed
+    sorter: (a, b) => a.Seed - b.Seed,
+    key: "seed"
   },
   {
     title: "Name",
-    dataIndex: "Name"
+    dataIndex: "Name",
+    key: "name"
   },
   {
     title: "Gender",
     dataIndex: "Gender",
-    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
+    sorter: (a, b) => a.Gender.localeCompare(b.Gender),
+    key: "gender"
   },
   {
     title: "Team Name",
     dataIndex: "Team name",
-    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
+    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"]),
+    key: "teamName"
   },
   {
     title: "Round 1 Heat",
@@ -247,13 +384,15 @@ const columns = [
     ],
     filterMultiple: false,
     filter: true,
-    onFilter: (value, record) => record.Round1Heat === value
+    onFilter: (value, record) => record.Round1Heat === value,
+    key: "heat"
   },
   {
     title: "Round 1 Result",
     dataIndex: "Round1Result",
     heatDataIndex: "Round1Heat",
-    editable: true
+    editable: true,
+    key: "result"
   }
 ];
 
@@ -647,6 +786,7 @@ function Manage({ history }) {
           <DeleteButton setRacers={setRacers} />
         </Col>
       </Row>
+      {createTables(racers)}
       <h3>Round 1</h3>
       <Table
         components={components}
