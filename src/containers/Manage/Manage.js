@@ -15,6 +15,7 @@ import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import { uniqBy } from "lodash";
 import "./Manage.css";
+import Column from "antd/lib/table/Column";
 
 const { Option } = Select;
 const { Parser } = require("json2csv");
@@ -623,7 +624,7 @@ function Manage({ history }) {
     });
   }
 
-  console.info("Manage->racers", racers);
+  console.table(racers);
 
   return (
     <div>
