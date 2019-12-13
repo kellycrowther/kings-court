@@ -14,7 +14,6 @@ export default function Results() {
 
   useEffect(() => {
     socket.on("outgoing-data", data => {
-      console.info("Results->init: ", data);
       setRacers(data.racers);
       setFilteredRacers(data.racers);
     });

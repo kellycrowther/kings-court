@@ -1,178 +1,220 @@
-import React from "react";
-import { Table } from "antd";
+import React, { useEffect, Fragment, useContext, useState } from "react";
+import { Table, Row, Col } from "antd";
+import { SelectPlace } from "../SelectPlace/SelectPlace";
+import { uniqBy } from "lodash";
+import { store } from "../../store/store";
+import { withRouter } from "react-router-dom";
 
-const columns = [
-  {
-    title: "Seed",
-    dataIndex: "Seed",
-    sorter: (a, b) => a.Seed - b.Seed
-  },
-  {
-    title: "Name",
-    dataIndex: "Name"
-  },
-  {
-    title: "Gender",
-    dataIndex: "Gender",
-    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
-  },
-  {
-    title: "Team Name",
-    dataIndex: "Team name",
-    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
-  },
-  {
-    title: "Round 1 Heat",
-    dataIndex: "Round1Heat",
-    sorter: (a, b) => a.Round1Heat - b.Round1Heat,
-    filters: [
-      /* set dynamically in Manage component */
-    ],
-    filterMultiple: false,
-    filter: true,
-    onFilter: (value, record) => record.Round1Heat === value
-  },
-  {
-    title: "Round 1 Result",
-    dataIndex: "Round1Result",
-    heatDataIndex: "Round1Heat",
-    editable: true
-  }
-];
+let heatFilters = [];
 
-const columnsRound2 = [
-  {
-    title: "Seed",
-    dataIndex: "Round2Seed",
-    sorter: (a, b) => a.Round2Seed - b.Round2Seed
-  },
-  {
-    title: "Name",
-    dataIndex: "Name"
-  },
-  {
-    title: "Gender",
-    dataIndex: "Gender",
-    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
-  },
-  {
-    title: "Team Name",
-    dataIndex: "Team name",
-    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
-  },
-  {
-    title: "Round 2 Heat",
-    dataIndex: "Round2Heat",
-    sorter: (a, b) => a.Round2Heat - b.Round2Heat,
-    filters: [
-      /* set dynamically in Manage component */
-    ],
-    filterMultiple: false,
-    filter: true,
-    onFilter: (value, record) => record.Round2Heat === value
-  },
-  {
-    title: "Round 2 Result",
-    dataIndex: "Round2Result",
-    heatDataIndex: "Round2Heat",
-    editable: true
-  }
-];
+function createFilterOptions(racers) {
+  const uniqueHeats = uniqBy(racers, "Round1Heat");
+  return uniqueHeats
+    .map(racer => {
+      return {
+        text: racer.Round1Heat.toString(),
+        value: racer.Round1Heat
+      };
+    })
+    .sort((a, b) => a.value - b.value);
+}
 
-const columnsRound3 = [
-  {
-    title: "Seed",
-    dataIndex: "Round3Seed",
-    sorter: (a, b) => a.Round3Seed - b.Round3Seed
-  },
-  {
-    title: "Name",
-    dataIndex: "Name"
-  },
-  {
-    title: "Gender",
-    dataIndex: "Gender",
-    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
-  },
-  {
-    title: "Team Name",
-    dataIndex: "Team name",
-    sorter: (a, b) => a["Team name"].localeCompare(b["Team name"])
-  },
-  {
-    title: "Round 3 Heat",
-    dataIndex: "Round3Heat",
-    sorter: (a, b) => a.Round3Heat - b.Round3Heat,
-    filters: [
-      /* set dynamically in Manage component */
-    ],
-    filterMultiple: false,
-    filter: true,
-    onFilter: (value, record) => record.Round3Heat === value
-  },
-  {
-    title: "Round 3 Result",
-    dataIndex: "Round3Result",
-    heatDataIndex: "Round3Heat",
-    editable: true
-  }
-];
+function EditableColumn({ row, heatIndex, resultIndex }) {
+  const globalState = useContext(store);
+  const { auth } = globalState.state;
+  const [canEdit, setCanEdit] = useState(false);
 
-const columnsFinalResults = [
-  {
-    title: "Final Result",
-    dataIndex: "FinalResult",
-    sorter: (a, b) => a.FinalResult - b.FinalResult
-  },
-  {
-    title: "Name",
-    dataIndex: "Name"
-  },
-  {
-    title: "Gender",
-    dataIndex: "Gender",
-    sorter: (a, b) => a.Gender.localeCompare(b.Gender)
-  },
-  {
-    title: "Team Name",
-    dataIndex: "Team name"
-  }
-];
+  useEffect(() => {
+    const isLoggedIn = auth.isLoggedIn;
+    const isManagePage = window.location.href.includes("manage");
+    setCanEdit(isLoggedIn && isManagePage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-export default function ResultsTables({ racers }) {
-  return (
-    <div>
-      <h3>Round 1</h3>
-      <Table
-        columns={columns}
-        dataSource={racers}
-        scroll={{ x: 650 }}
-        rowKey="Bib"
-      />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Round 2</h3>
-      <Table
-        columns={columnsRound2}
-        dataSource={racers}
-        scroll={{ x: 650 }}
-        rowKey="Bib"
-      />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Round 3</h3>
-      <Table
-        columns={columnsRound3}
-        dataSource={racers}
-        scroll={{ x: 650 }}
-        rowKey="Bib"
-      />
-      <div style={{ padding: "30px" }}></div>
-      <h3>Final Results</h3>
-      <Table
-        columns={columnsFinalResults}
-        dataSource={racers}
-        scroll={{ x: 650 }}
-        rowKey="Bib"
-      />
-    </div>
+  return canEdit ? (
+    <SelectPlace row={row} heatIndex={heatIndex} resultIndex={resultIndex} />
+  ) : (
+    <div>{row[resultIndex]}</div>
   );
 }
+
+class ResultColumn {
+  constructor(
+    title,
+    dataIndex,
+    sortable,
+    filterable,
+    editable,
+    resultIndex,
+    heatIndex
+  ) {
+    this.title = title;
+    this.dataIndex = dataIndex;
+    this.filters = [];
+    this.filterMultiple = false;
+    this.filterable = filterable;
+    this.filter = filterable;
+    this.editable = editable;
+    this.key = title;
+    this.canEdit = false;
+
+    if (sortable) {
+      this.sorter = (a, b) => {
+        if (isNaN(a[this.dataIndex])) {
+          return a[this.dataIndex].localeCompare(b[this.dataIndex]);
+        } else {
+          return a[this.dataIndex] - b[this.dataIndex];
+        }
+      };
+    }
+
+    if (this.filterable) {
+      this.onFilter = (value, record) => record[dataIndex] === value;
+
+      this.filters = heatFilters;
+    }
+
+    if (this.editable) {
+      this.render = (text, row) => {
+        const props = {
+          row,
+          heatIndex,
+          resultIndex
+        };
+        return <EditableColumn {...props} />;
+      };
+    }
+  }
+}
+
+const rounds = [
+  {
+    name: "Round 1",
+    columns: [],
+    key: "round-1",
+    heatName: "Round 1 Heat",
+    heatIndex: "Round1Heat",
+    resultName: "Round 1 Result",
+    resultIndex: "Round1Result",
+    seedName: "Seed",
+    seedIndex: "Seed"
+  },
+  {
+    name: "Round 2",
+    columns: [],
+    key: "round-2",
+    heatName: "Round 2 Heat",
+    heatIndex: "Round2Heat",
+    resultName: "Round 2 Result",
+    resultIndex: "Round2Result",
+    seedName: "Seed",
+    seedIndex: "Round2Seed"
+  },
+  {
+    name: "Round 3",
+    columns: [],
+    key: "round-3",
+    heatName: "Round 3 Heat",
+    heatIndex: "Round3Heat",
+    resultName: "Round 3 Result",
+    resultIndex: "Round3Result",
+    seedName: "Seed",
+    seedIndex: "Round3Seed"
+  },
+  {
+    name: "Final Results",
+    columns: [],
+    key: "final-results",
+    heatName: "Round 3 Heat",
+    heatIndex: "Round3Heat",
+    resultName: "Round 3 Result",
+    resultIndex: "Round3Result",
+    seedName: "Final Result",
+    seedIndex: "FinalResult"
+  }
+];
+
+function createColumns() {
+  for (let round of rounds) {
+    round.columns = [];
+    const seedCol = new ResultColumn(
+      round.seedName,
+      round.seedIndex,
+      true,
+      false,
+      false
+    );
+    const nameCol = new ResultColumn("Name", "Name", false, false, false);
+    const genderCol = new ResultColumn("Gender", "Gender", true, false, false);
+    const teamCol = new ResultColumn(
+      "Team Name",
+      "Team name",
+      true,
+      false,
+      false
+    );
+    const heatCol = new ResultColumn(
+      round.heatName,
+      round.heatIndex,
+      true,
+      true,
+      false
+    );
+    const resultCol = new ResultColumn(
+      round.resultName,
+      round.resultIndex,
+      true,
+      false,
+      true,
+      round.resultIndex,
+      round.heatIndex
+    );
+    if (round.key === "final-results") {
+      // don't show heat or result column if it's the final results
+      round.columns.push(seedCol, nameCol, genderCol, teamCol);
+    } else {
+      round.columns.push(
+        seedCol,
+        nameCol,
+        genderCol,
+        teamCol,
+        heatCol,
+        resultCol
+      );
+    }
+  }
+}
+
+function createTables(racers) {
+  createColumns();
+  const tables = [];
+  for (let round of rounds) {
+    tables.push(
+      <Fragment key={round.key}>
+        <Row>
+          <Col span={8} className="round-header">
+            <h3>{round.name}</h3>
+            {/* <SaveButton racers={racers} /> */}
+          </Col>
+        </Row>
+        <Table
+          dataSource={racers}
+          columns={round.columns}
+          rowKey="Bib"
+          scroll={{ x: 650 }}
+        />
+      </Fragment>
+    );
+  }
+  return tables;
+}
+
+function ResultsTables({ racers }) {
+  useEffect(() => {
+    heatFilters = createFilterOptions(racers);
+  }, [racers]);
+
+  return <div>{createTables(racers)}</div>;
+}
+
+export default withRouter(ResultsTables);

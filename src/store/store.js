@@ -2,7 +2,9 @@ import React, { createContext, useReducer } from "react";
 import { setSeed } from "../helpers/setSeed";
 
 const initialState = {
-  color: "red",
+  auth: {
+    isLoggedIn: false
+  },
   racers: []
 };
 const store = createContext(initialState);
@@ -24,6 +26,13 @@ const StateProvider = ({ children }) => {
         racers[index][resultIndex] = place;
         racers[index] = setSeed(row, racers, resultIndex, heatIndex);
         state = { ...state, state: [...racers] };
+        return state;
+      }
+
+      case "SET_LOGGED_IN": {
+        const auth = { ...state.auth };
+        const isLoggedIn = action.payload.isLoggedIn;
+        state.auth = { ...auth.isLoggedIn, isLoggedIn };
         return state;
       }
       default:

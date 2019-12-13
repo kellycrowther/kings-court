@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Menu, Icon, Breadcrumb, Layout, message, Typography } from "antd";
 import "./App.css";
@@ -6,6 +6,7 @@ import "./App.css";
 import Manage from "./containers/Manage/Manage";
 import Results from "./containers/Results/Results";
 import LoginModal from "./components/LoginModal/LoginModal";
+import { store } from "./store/store";
 
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
@@ -13,10 +14,13 @@ const { Paragraph } = Typography;
 export default function BasicExample() {
   const [loginVisible, setLoginVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const globalState = useContext(store);
+  const { dispatch } = globalState;
 
   const handleLogin = password => {
     if (password === "bMoGL4XY5tei") {
       setIsLoggedIn(true);
+      dispatch({ type: "SET_LOGGED_IN", payload: { isLoggedIn: true } });
       localStorage.setItem("isLoggedIn", JSON.stringify(true));
       message.success("You have been successfully logged in.");
     } else {
@@ -28,7 +32,11 @@ export default function BasicExample() {
     let storedIsLoggedIn = localStorage.getItem("isLoggedIn");
     storedIsLoggedIn = JSON.parse(storedIsLoggedIn);
     setIsLoggedIn(storedIsLoggedIn);
-  }, []);
+    dispatch({
+      type: "SET_LOGGED_IN",
+      payload: { isLoggedIn: storedIsLoggedIn }
+    });
+  }, [dispatch]);
 
   return (
     <Layout className="layout">
