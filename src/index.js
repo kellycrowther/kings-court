@@ -1,14 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import rootReducer from "./core/reducer";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { StateProvider } from "./store/store";
+
+const store = createStore(rootReducer);
 
 ReactDOM.render(
-  <StateProvider>
+  <Provider store={store}>
     <App />
-  </StateProvider>,
+  </Provider>,
   document.getElementById("root")
 );
 

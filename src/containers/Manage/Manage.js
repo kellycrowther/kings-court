@@ -1,11 +1,12 @@
-import React, { useEffect, useContext, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { withRouter } from "react-router-dom";
 import { Button, Icon, Popconfirm, Row, Col, message } from "antd";
 import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import "./Manage.css";
-import { store } from "../../store/store.js";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
+import { connect } from "react-redux";
+import { setRacersToStore } from "../../core/actions";
 
 const { Parser } = require("json2csv");
 const endpoint = process.env.REACT_APP_API_ENDPOINT;
@@ -134,15 +135,7 @@ function UploadFile({ inputFile }) {
   );
 }
 
-function Manage({ history }) {
-  const globalState = useContext(store);
-  const { dispatch } = globalState;
-  const { racers } = globalState.state;
-
-  function setRacers(racers) {
-    dispatch({ type: "SET_RACERS", payload: racers });
-  }
-
+function Manage({ history, racers, setRacersToStore }) {
   function downloadCSV() {
     const json2csvParser = new Parser();
     const csv = json2csvParser.parse(racers);
@@ -159,9 +152,9 @@ function Manage({ history }) {
     let savedRacers = localStorage.getItem("racers");
     savedRacers = JSON.parse(savedRacers);
     if (savedRacers) {
-      dispatch({ type: "SET_RACERS", payload: savedRacers });
+      setRacersToStore(savedRacers);
     }
-  }, [dispatch]);
+  }, [setRacersToStore]);
 
   // listen for navigation and page refresh changes and save the racers
   useEffect(() => {
@@ -184,7 +177,7 @@ function Manage({ history }) {
     event.preventDefault();
     var file = event.target.files[0];
     readCSV(file).then(csvData => {
-      setRacers(csvData);
+      setRacersToStore(csvData);
     });
   }
 
@@ -208,7 +201,7 @@ function Manage({ history }) {
           <SaveButton racers={racers} />
         </Col>
         <Col span={8} offset={8} className="delete-container">
-          <DeleteButton setRacers={setRacers} />
+          <DeleteButton setRacers={setRacersToStore} />
         </Col>
       </Row>
 
@@ -221,4 +214,12 @@ function Manage({ history }) {
   );
 }
 
-export default withRouter(Manage);
+const mapStateToProps = state => ({
+  racers: state.racers
+});
+
+const mapDispatchToProps = dispatch => ({
+  setRacersToStore: racers => dispatch(setRacersToStore(racers))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Manage));

@@ -1,9 +1,8 @@
-import React, { useEffect, Fragment, useContext, useState } from "react";
+import React, { useEffect, Fragment } from "react";
 import { Table, Row, Col } from "antd";
-import { SelectPlace } from "../SelectPlace/SelectPlace";
 import { uniqBy } from "lodash";
-import { store } from "../../store/store";
 import { withRouter } from "react-router-dom";
+import EditableColumn from "../EditableColumn/EditableColumn";
 
 let heatFilters = [];
 
@@ -17,25 +16,6 @@ function createFilterOptions(racers) {
       };
     })
     .sort((a, b) => a.value - b.value);
-}
-
-function EditableColumn({ row, heatIndex, resultIndex }) {
-  const globalState = useContext(store);
-  const { auth } = globalState.state;
-  const [canEdit, setCanEdit] = useState(false);
-
-  useEffect(() => {
-    const isLoggedIn = auth.isLoggedIn;
-    const isManagePage = window.location.href.includes("manage");
-    setCanEdit(isLoggedIn && isManagePage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return canEdit ? (
-    <SelectPlace row={row} heatIndex={heatIndex} resultIndex={resultIndex} />
-  ) : (
-    <div>{row[resultIndex]}</div>
-  );
 }
 
 class ResultColumn {

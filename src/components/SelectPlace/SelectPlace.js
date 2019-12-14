@@ -1,20 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Select } from "antd";
-import { store } from "../../store/store.js";
+import { setSeed } from "../../core/actions/index.js";
+import { connect } from "react-redux";
 
 const { Option } = Select;
 
-export const SelectPlace = ({ row, heatIndex, resultIndex }) => {
-  const globalState = useContext(store);
-  const { dispatch } = globalState;
+const SelectPlace = ({ row, heatIndex, resultIndex, setSeed }) => {
   return (
     <Select
-      onSelect={place =>
-        dispatch({
-          type: "SET_SEED",
-          payload: { row, heatIndex, resultIndex, place }
-        })
-      }
+      onSelect={place => setSeed({ row, heatIndex, resultIndex, place })}
       value={row[resultIndex]}
       style={{ width: 80 }}
     >
@@ -27,3 +21,10 @@ export const SelectPlace = ({ row, heatIndex, resultIndex }) => {
     </Select>
   );
 };
+
+const mapDispatchToProps = dispatch => ({
+  setSeed: ({ row, heatIndex, resultIndex, place }) =>
+    dispatch(setSeed({ row, heatIndex, resultIndex, place }))
+});
+
+export default connect(null, mapDispatchToProps)(SelectPlace);
