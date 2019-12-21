@@ -1,72 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Menu, Icon, Breadcrumb, Layout, message, Typography } from "antd";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Breadcrumb, Layout, Typography, Spin } from "antd";
 import "./App.css";
 
 import Manage from "./containers/Manage/Manage";
 import Results from "./containers/Results/Results";
-import LoginModal from "./components/LoginModal/LoginModal";
-import { connect } from "react-redux";
-import { setIsLoggedIn } from "./core/actions";
+import { useAuth0 } from "./auth0";
+import history from "./helpers/history";
+import Profile from "./components/Profile/Profile";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import AppHeader from "./components/AppHeader/AppHeader";
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 const { Paragraph } = Typography;
 
-const App = ({ auth, setIsLoggedIn }) => {
-  const [loginVisible, setLoginVisible] = useState(false);
+const App = () => {
+  const { loading } = useAuth0();
 
-  const { isLoggedIn } = auth;
-
-  const handleLogin = password => {
-    if (password === "bMoGL4XY5tei") {
-      setIsLoggedIn(true);
-      localStorage.setItem("isLoggedIn", JSON.stringify(true));
-      message.success("You have been successfully logged in.");
-    } else {
-      message.error("The password you entered was incorrect.");
-    }
-  };
-
-  useEffect(() => {
-    let storedIsLoggedIn = localStorage.getItem("isLoggedIn");
-    storedIsLoggedIn = JSON.parse(storedIsLoggedIn);
-    setIsLoggedIn(storedIsLoggedIn);
-  }, [setIsLoggedIn]);
+  if (loading) {
+    return <Spin />;
+  }
 
   return (
     <Layout className="layout">
-      <Router>
-        <Header className="custom-header">
-          <div className="logo" />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={["2"]}
-            style={{ lineHeight: "64px" }}
-          >
-            <Menu.Item key="home">
-              <Icon type="home" />
-              Home
-              <Link to="/"></Link>
-            </Menu.Item>
-            {isLoggedIn ? (
-              <Menu.Item>
-                <Icon type="database" />
-                Manage
-                <Link to="/manage"></Link>
-              </Menu.Item>
-            ) : null}
-            <Menu.Item>
-              <Icon type="dashboard" />
-              Results
-              <Link to="/results"></Link>
-            </Menu.Item>
-            <Menu.Item onClick={() => setLoginVisible(true)}>
-              <Icon type="login" />
-              Login
-            </Menu.Item>
-          </Menu>
-        </Header>
+      <Router history={history}>
+        <AppHeader />
         <Content className="content">
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -84,13 +42,9 @@ const App = ({ auth, setIsLoggedIn }) => {
               <Route path="/results">
                 <Results />
               </Route>
+              <PrivateRoute path="/profile" component={Profile} />
             </Switch>
           </div>
-          <LoginModal
-            visible={loginVisible}
-            setLoginVisible={setLoginVisible}
-            handleLogin={handleLogin}
-          />
         </Content>
         <Footer style={{ textAlign: "center" }}>
           kellycrowther.io ©{new Date().getFullYear()} Created by Kelly Crowther
@@ -117,12 +71,4 @@ function Home() {
   );
 }
 
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
-const mapDispatchToProps = dispatch => ({
-  setIsLoggedIn: isLoggedIn => dispatch(setIsLoggedIn(isLoggedIn))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

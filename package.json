@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.6.0",
     "antd": "^3.26.0",
     "json2csv": "^4.5.4",
     "lodash": "^4.17.15",
