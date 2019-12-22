@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import rootReducer from "./core/reducer";
 import "./index.css";
 import App from "./App";
@@ -9,8 +9,18 @@ import * as serviceWorker from "./serviceWorker";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { Auth0Provider } from "./auth0";
 import history from "./helpers/history";
+import { createEpicMiddleware } from "redux-observable";
+import epics from "./core/epics";
 
-const store = createStore(rootReducer, composeWithDevTools());
+const epicMiddleware = createEpicMiddleware();
+
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(epicMiddleware))
+);
+
+epicMiddleware.run(epics);
+
 const auth0Domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const auth0ClientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
 

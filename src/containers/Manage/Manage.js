@@ -1,16 +1,22 @@
 import React, { useEffect, useRef } from "react";
 import { withRouter } from "react-router-dom";
-import { Button, Icon, Popconfirm, Row, Col, message } from "antd";
+import { Button, Icon, Popconfirm, Row, Col, message, Select } from "antd";
 import Papa from "papaparse";
 import socketIOClient from "socket.io-client";
 import "./Manage.css";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
 import { connect } from "react-redux";
-import { setRacersToStore } from "../../core/actions";
+import {
+  setRacersToStore,
+  getRacesByUser,
+  createRace
+} from "../../core/actions";
+import { useAuth0 } from "../../auth0";
 
 const { Parser } = require("json2csv");
 const endpoint = process.env.REACT_APP_API_ENDPOINT;
 const socket = socketIOClient(endpoint);
+const { Option } = Select;
 
 // TODO: DNS or no shows
 // TODO: DNF
@@ -20,6 +26,9 @@ const socket = socketIOClient(endpoint);
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 // TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
 // BUG: Heat filters disappear after page refresh
+// TODO: each created race should be passed with a user id
+// TODO: each race should have it's own websocket to connect to and broadcast events from
+// BUG: refreshing page with Social login like Google logs me out; issue https://community.auth0.com/t/getting-logged-out-after-refreshing-on-localhost-react-js-spa/28474/2
 
 function readCSV(info) {
   let reader = new FileReader();
@@ -135,7 +144,15 @@ function UploadFile({ inputFile }) {
   );
 }
 
-function Manage({ history, racers, setRacersToStore }) {
+function Manage({
+  history,
+  racers,
+  setRacersToStore,
+  getRacesByUser,
+  createRace
+}) {
+  const { user } = useAuth0();
+
   function downloadCSV() {
     const json2csvParser = new Parser();
     const csv = json2csvParser.parse(racers);
@@ -148,13 +165,14 @@ function Manage({ history, racers, setRacersToStore }) {
   }
 
   useEffect(() => {
+    getRacesByUser({ userId: user.sub });
     // retrieve data from local storage
     let savedRacers = localStorage.getItem("racers");
     savedRacers = JSON.parse(savedRacers);
     if (savedRacers) {
       setRacersToStore(savedRacers);
     }
-  }, [setRacersToStore]);
+  }, [setRacersToStore, getRacesByUser, user]);
 
   // listen for navigation and page refresh changes and save the racers
   useEffect(() => {
@@ -178,17 +196,29 @@ function Manage({ history, racers, setRacersToStore }) {
     var file = event.target.files[0];
     readCSV(file).then(csvData => {
       setRacersToStore(csvData);
+
+      const race = {
+        name: "Hoodoo Night Race",
+        userId: user.sub,
+        wsName: "oisra",
+        results: csvData
+      };
+      createRace(race);
     });
   }
+
+  const handleRaceSelect = () => {
+    console.info("HANDLE RACE SELECT");
+  };
 
   console.info("Manage->racers->", racers);
 
   return (
     <div>
       <h2>Manage</h2>
-      <h3>Create Race</h3>
-      <Row>
-        <Col span={8} className="manage--create-btns">
+      <Row className="manage-actions">
+        <Col span={8}>
+          <h3>Create Race</h3>
           <UploadFile inputFile={inputFile} />
           <input
             type="file"
@@ -198,16 +228,31 @@ function Manage({ history, racers, setRacersToStore }) {
             onChange={onChangeFile}
             style={{ display: "none" }}
           />
-          <SaveButton racers={racers} />
         </Col>
-        <Col span={8} offset={8} className="delete-container">
+        <Col span={8}>
+          <h3>Manage Existing Race</h3>
+          <Select
+            style={{ width: 300 }}
+            onChange={handleRaceSelect}
+            placeholder="Select Previously Created Race"
+          >
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+          </Select>
+        </Col>
+        <Col span={8} className="delete-container">
+          <SaveButton racers={racers} />
           <DeleteButton setRacers={setRacersToStore} />
         </Col>
       </Row>
 
       <ResultsTables racers={racers} />
 
-      <Button onClick={downloadCSV} type="primary">
+      <Button
+        onClick={downloadCSV}
+        type="primary"
+        className="download-final-btn"
+      >
         <Icon type="download" /> Download Final Results
       </Button>
     </div>
@@ -219,7 +264,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setRacersToStore: racers => dispatch(setRacersToStore(racers))
+  setRacersToStore: racers => dispatch(setRacersToStore(racers)),
+  getRacesByUser: userId => dispatch(getRacesByUser(userId)),
+  createRace: race => dispatch(createRace(race))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Manage));
