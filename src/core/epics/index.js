@@ -1,8 +1,15 @@
 import "rxjs";
 import { combineEpics } from "redux-observable";
 import { ajax } from "rxjs/ajax";
-import { Observable } from "rxjs";
-import { mergeMap, takeUntil, map, retry, catchError } from "rxjs/operators";
+import { of } from "rxjs";
+import {
+  mergeMap,
+  takeUntil,
+  map,
+  retry,
+  catchError,
+  switchMap
+} from "rxjs/operators";
 import { ofType } from "redux-observable";
 import {
   RacesActions,
@@ -11,7 +18,10 @@ import {
   createRaceSuccess,
   createRaceFailure,
   updateRaceSuccess,
-  updateRaceFailure
+  updateRaceFailure,
+  deleteRaceSuccess,
+  deleteRaceFailure,
+  getRacesByUser
 } from "../actions";
 import { message } from "antd";
 import { emitSocket } from "../../sockets/sockets";
@@ -27,11 +37,13 @@ export const getRaces = actions$ => {
         map(races => getRacesByUserSuccess(races)),
         takeUntil(actions$.ofType(RacesActions.GET_RACES_BY_USER)),
         retry(2),
-        catchError(error => Observable.of(getRacesByUserFailure()))
+        catchError(error => of(getRacesByUserFailure()))
       );
     })
   );
 };
+
+// DELETE_RACE
 
 export const createRace = actions$ => {
   return actions$.pipe(
@@ -45,7 +57,7 @@ export const createRace = actions$ => {
           map(race => createRaceSuccess(race.response)),
           takeUntil(actions$.ofType(RacesActions.CREATE_RACE)),
           retry(2),
-          catchError(error => Observable.of(createRaceFailure()))
+          catchError(error => of(createRaceFailure()))
         );
     })
   );
@@ -68,10 +80,33 @@ export const updateRace = actions$ => {
           }),
           takeUntil(actions$.ofType(RacesActions.UPDATE_RACE_SUCCESS)),
           retry(2),
-          catchError(error => Observable.of(updateRaceFailure()))
+          catchError(error => of(updateRaceFailure()))
         );
     })
   );
 };
 
-export default combineEpics(getRaces, createRace, updateRace);
+export const deleteRace = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.DELETE_RACE),
+    mergeMap(action => {
+      const raceId = action.payload.id;
+      return ajax
+        .delete(`${endpoint}/races/${raceId}`, {
+          "Content-Type": "application/json"
+        })
+        .pipe(
+          map(race => {
+            emitSocket([]);
+            message.success("Successfully deleted the race!");
+            return deleteRaceSuccess(race.response);
+          }),
+          takeUntil(actions$.ofType(RacesActions.DELETE_RACE_SUCCESS)),
+          retry(2),
+          catchError(error => of(deleteRaceFailure()))
+        );
+    })
+  );
+};
+
+export default combineEpics(getRaces, createRace, updateRace, deleteRace);

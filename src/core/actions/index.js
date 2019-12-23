@@ -22,7 +22,11 @@ export const RacesActions = {
 
   UPDATE_RACE: "UPDATE_RACE",
   UPDATE_RACE_SUCCESS: "UPDATE_RACE_SUCCESS",
-  UPDATE_RACE_FAILURE: "CUPDATE_RACE_FAILURE"
+  UPDATE_RACE_FAILURE: "CUPDATE_RACE_FAILURE",
+
+  DELETE_RACE: "DELETE_RACE",
+  DELETE_RACE_SUCCESS: "DELETE_RACE_SUCCESS",
+  DELETE_RACE_FAILURE: "DELETE_RACE_FAILURE"
 };
 
 export const getRacesByUser = payload => ({
@@ -77,5 +81,20 @@ export const updateRaceSuccess = payload => ({
 
 export const updateRaceFailure = payload => ({
   type: RacesActions.UPDATE_RACE_FAILURE,
+  payload
+});
+
+export const deleteRace = payload => ({
+  type: RacesActions.DELETE_RACE,
+  payload
+});
+
+export const deleteRaceSuccess = payload => ({
+  type: RacesActions.DELETE_RACE_SUCCESS,
+  payload
+});
+
+export const deleteRaceFailure = payload => ({
+  type: RacesActions.DELETE_RACE_FAILURE,
   payload
 });

@@ -8,7 +8,8 @@ import {
   getRacesByUser,
   createRace,
   updateRace,
-  setCurrentRace
+  setCurrentRace,
+  deleteRace
 } from "../../core/actions";
 import { useAuth0 } from "../../auth0";
 import CreateRace from "../../components/CreateRace/CreateRace";
@@ -32,14 +33,14 @@ const { Option } = Select;
 // TODO: save needs to make put request to the database
 // TODO: listen for setseed in epic and dispatch PUT
 
-function DeleteButton({ setRacers }) {
+function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
-    setRacers([]);
+    deleteRace(currentRace);
     emitSocket([]);
   }
   return (
     <Popconfirm
-      title="Are you sure you want to delete all the data?"
+      title="Are you sure you want to delete this race?"
       onConfirm={confirm}
       okText="Yes"
       cancelText="No"
@@ -59,7 +60,8 @@ function Manage({
   races,
   updateRace,
   setCurrentRace,
-  currentRace
+  currentRace,
+  deleteRace
 }) {
   const { user } = useAuth0();
   const { openCoverScreen } = useCover();
@@ -141,7 +143,7 @@ function Manage({
           >
             <Icon type="save" /> Save
           </Button>
-          {/* <DeleteButton setRacers={setCurrentRace} /> */}
+          <DeleteButton deleteRace={deleteRace} currentRace={currentRace} />
         </Col>
       </Row>
 
@@ -167,7 +169,8 @@ const mapDispatchToProps = dispatch => ({
   getRacesByUser: userId => dispatch(getRacesByUser(userId)),
   createRace: race => dispatch(createRace(race)),
   updateRace: race => dispatch(updateRace(race)),
-  setCurrentRace: race => dispatch(setCurrentRace(race))
+  setCurrentRace: race => dispatch(setCurrentRace(race)),
+  deleteRace: race => dispatch(deleteRace(race))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Manage));

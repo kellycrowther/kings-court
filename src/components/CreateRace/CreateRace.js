@@ -147,7 +147,6 @@ const CreateRace = ({ createRace, setCurrentRace }) => {
       wsName: event.organization,
       results: seeds
     };
-    setCurrentRace(race);
     createRace(race);
     closeCoverScreen();
   }

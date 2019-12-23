@@ -5,12 +5,14 @@ const INITIAL_STATE = {
   loading: {
     createRace: false,
     getRacesByUser: false,
-    updateRace: false
+    updateRace: false,
+    deleteRace: false
   },
   loaded: {
     createRace: false,
     getRacesByUser: false,
-    updateRace: false
+    updateRace: false,
+    deleteRace: false
   },
   races: [],
   currentRace: {
@@ -45,7 +47,7 @@ const racesState = (state = INITIAL_STATE, action) => {
           ...state.loaded,
           getRacesByUser: true
         },
-        races: action.payload
+        races: [...action.payload]
       };
     }
 
@@ -88,7 +90,8 @@ const racesState = (state = INITIAL_STATE, action) => {
           ...state.loaded,
           createRace: true
         },
-        races: [...state.races, action.payload]
+        races: [...state.races, action.payload],
+        currentRace: action.payload
       };
     }
 
@@ -173,6 +176,53 @@ const racesState = (state = INITIAL_STATE, action) => {
         loaded: {
           ...state.loaded,
           updateRace: false
+        }
+      };
+    }
+
+    case RacesActions.DELETE_RACE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteRace: true
+        },
+        loaded: {
+          ...state.loaded,
+          deleteRace: false
+        }
+      };
+    }
+    case RacesActions.DELETE_RACE_SUCCESS: {
+      const index = state.races.findIndex(
+        race => race.id === action.payload.id
+      );
+      const newRaces = [...state.races];
+      newRaces.splice(index, 1);
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteRace: false
+        },
+        loaded: {
+          ...state.loaded,
+          deleteRace: true
+        },
+        currentRace: {},
+        races: newRaces
+      };
+    }
+    case RacesActions.DELETE_RACE_FAILURE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteRace: false
+        },
+        loaded: {
+          ...state.loaded,
+          deleteRace: false
         }
       };
     }
