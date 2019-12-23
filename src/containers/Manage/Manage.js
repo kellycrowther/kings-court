@@ -27,16 +27,13 @@ const { Option } = Select;
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 // TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
 // BUG: Heat filters disappear after page refresh
-// TODO: each created race should be passed with a user id
 // TODO: each race should have it's own websocket to connect to and broadcast events from
 // BUG: refreshing page with Social login like Google logs me out; issue https://community.auth0.com/t/getting-logged-out-after-refreshing-on-localhost-react-js-spa/28474/2
-// TODO: save needs to make put request to the database
-// TODO: listen for setseed in epic and dispatch PUT
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
     deleteRace(currentRace);
-    emitSocket([]);
+    // emitSocket({});
   }
   return (
     <Popconfirm
@@ -98,7 +95,7 @@ function Manage({
   }, [currentRace, updateRace, history]);
 
   useEffect(() => {
-    emitSocket(currentRace.results);
+    emitSocket(currentRace);
   });
 
   const handleRaceSelect = raceId => {

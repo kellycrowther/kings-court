@@ -16,6 +16,8 @@ const INITIAL_STATE = {
   },
   races: [],
   currentRace: {
+    name: "",
+    id: "",
     results: []
   }
 };

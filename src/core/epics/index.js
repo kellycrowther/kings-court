@@ -2,14 +2,7 @@ import "rxjs";
 import { combineEpics } from "redux-observable";
 import { ajax } from "rxjs/ajax";
 import { of } from "rxjs";
-import {
-  mergeMap,
-  takeUntil,
-  map,
-  retry,
-  catchError,
-  switchMap
-} from "rxjs/operators";
+import { mergeMap, takeUntil, map, retry, catchError } from "rxjs/operators";
 import { ofType } from "redux-observable";
 import {
   RacesActions,
@@ -20,8 +13,7 @@ import {
   updateRaceSuccess,
   updateRaceFailure,
   deleteRaceSuccess,
-  deleteRaceFailure,
-  getRacesByUser
+  deleteRaceFailure
 } from "../actions";
 import { message } from "antd";
 import { emitSocket } from "../../sockets/sockets";
@@ -42,8 +34,6 @@ export const getRaces = actions$ => {
     })
   );
 };
-
-// DELETE_RACE
 
 export const createRace = actions$ => {
   return actions$.pipe(
@@ -74,7 +64,7 @@ export const updateRace = actions$ => {
         })
         .pipe(
           map(race => {
-            emitSocket(action.payload.results);
+            emitSocket(race.response);
             message.success("Successfully saved data!");
             return updateRaceSuccess(race.response);
           }),
