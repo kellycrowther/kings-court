@@ -152,7 +152,6 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
   return (
     <Fragment>
       <Formik
-        enableReinitialize={true}
         initialValues={initialValues}
         onSubmit={onSubmit}
         validationSchema={validationSchema}
@@ -164,8 +163,7 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
           touched,
           handleChange,
           handleSubmit,
-          setFieldValue,
-          isValid
+          setFieldValue
         }) => (
           <form onSubmit={handleSubmit} autoComplete="off">
             <FormInner>
@@ -203,7 +201,12 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
                 style={{ display: "none" }}
               />
               <UploadedConfirmation uploaded={uploaded} fileName={fileName} />
-              <Button type="primary" htmlType="submit" className="submit-btn">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="submit-btn"
+                disabled={!values.name || !values.organization || !fileName}
+              >
                 <Icon type="thunderbolt" />
                 Create Race
               </Button>

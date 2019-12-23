@@ -30,7 +30,6 @@ const { Option } = Select;
 // TODO: each created race should be passed with a user id
 // TODO: each race should have it's own websocket to connect to and broadcast events from
 // BUG: refreshing page with Social login like Google logs me out; issue https://community.auth0.com/t/getting-logged-out-after-refreshing-on-localhost-react-js-spa/28474/2
-// TODO: createRace submit needs to disable unless all fields are filled in
 
 function emitResults(racers) {
   socket.emit("incoming-data", racers);
