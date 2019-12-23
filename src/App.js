@@ -10,6 +10,7 @@ import history from "./helpers/history";
 import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import AppHeader from "./components/AppHeader/AppHeader";
+import { DialogProviders } from "./context";
 
 const { Content, Footer } = Layout;
 const { Paragraph } = Typography;
@@ -22,35 +23,38 @@ const App = () => {
   }
 
   return (
-    <Layout className="layout">
-      <Router history={history}>
-        <AppHeader />
-        <Content className="content">
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <div style={{ background: "#fff", padding: 24, minHeight: 280 }}>
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route path="/manage">
-                <Manage />
-              </Route>
-              <Route path="/results">
-                <Results />
-              </Route>
-              <PrivateRoute path="/profile" component={Profile} />
-            </Switch>
-          </div>
-        </Content>
-        <Footer style={{ textAlign: "center" }}>
-          kellycrowther.io ©{new Date().getFullYear()} Created by Kelly Crowther
-        </Footer>
-      </Router>
-    </Layout>
+    <DialogProviders>
+      <Layout className="layout">
+        <Router history={history}>
+          <AppHeader />
+          <Content className="content">
+            <Breadcrumb style={{ margin: "16px 0" }}>
+              <Breadcrumb.Item>Home</Breadcrumb.Item>
+              <Breadcrumb.Item>List</Breadcrumb.Item>
+              <Breadcrumb.Item>App</Breadcrumb.Item>
+            </Breadcrumb>
+            <div style={{ background: "#fff", padding: 24, minHeight: 280 }}>
+              <Switch>
+                <Route exact path="/">
+                  <Home />
+                </Route>
+                <Route path="/manage">
+                  <Manage />
+                </Route>
+                <Route path="/results">
+                  <Results />
+                </Route>
+                <PrivateRoute path="/profile" component={Profile} />
+              </Switch>
+            </div>
+          </Content>
+          <Footer style={{ textAlign: "center" }}>
+            kellycrowther.io ©{new Date().getFullYear()} Created by Kelly
+            Crowther
+          </Footer>
+        </Router>
+      </Layout>
+    </DialogProviders>
   );
 };
 
