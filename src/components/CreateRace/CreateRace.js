@@ -6,6 +6,7 @@ import { Button, Icon, Select, message, Typography } from "antd";
 import { useAuth0 } from "../../auth0";
 import "./CreateRace.css";
 import { StyledField, FormInner, FieldError, StyledSelect } from "../Forms";
+import { useCover } from "../../context/cover";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -115,6 +116,7 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
   const [fileName, setFileName] = useState("");
   const [seeds, setSeeds] = useState([]);
   const { user } = useAuth0();
+  const { closeCoverScreen } = useCover();
 
   const inputFile = useRef(null);
 
@@ -147,6 +149,7 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
     };
     setRacersToStore(seeds);
     createRace(race);
+    closeCoverScreen();
   }
 
   return (

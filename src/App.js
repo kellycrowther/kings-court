@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Breadcrumb, Layout, Typography, Spin } from "antd";
+import { Breadcrumb, Layout, Spin } from "antd";
 import "./App.css";
 
 import Manage from "./containers/Manage/Manage";
@@ -13,7 +13,6 @@ import AppHeader from "./components/AppHeader/AppHeader";
 import { DialogProviders } from "./context";
 
 const { Content, Footer } = Layout;
-const { Paragraph } = Typography;
 
 const App = () => {
   const { loading } = useAuth0();
@@ -38,9 +37,7 @@ const App = () => {
                 <Route exact path="/">
                   <Home />
                 </Route>
-                <Route path="/manage">
-                  <Manage />
-                </Route>
+                <PrivateRoute path="/manage" component={Manage} />
                 <Route path="/results">
                   <Results />
                 </Route>
@@ -69,7 +66,12 @@ function Home() {
         </span>
       </p>
       <div>
-        The password to login is: <Paragraph copyable>bMoGL4XY5tei</Paragraph>
+        If you are managing a race, login to create your race, upload your
+        seeded racers, and begin setting their places.
+      </div>
+      <div>
+        If you are a interested in finding your results, go to the results page
+        to see your live results.
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ const INITIAL_STATE = {
   races: []
 };
 
-const races = (state = INITIAL_STATE, action) => {
+const racesState = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case RacesActions.GET_RACES_BY_USER: {
       return {
@@ -104,4 +104,4 @@ const races = (state = INITIAL_STATE, action) => {
   }
 };
 
-export default races;
+export default racesState;

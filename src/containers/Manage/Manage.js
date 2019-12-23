@@ -30,6 +30,8 @@ const { Option } = Select;
 // TODO: each created race should be passed with a user id
 // TODO: each race should have it's own websocket to connect to and broadcast events from
 // BUG: refreshing page with Social login like Google logs me out; issue https://community.auth0.com/t/getting-logged-out-after-refreshing-on-localhost-react-js-spa/28474/2
+// TODO: save needs to make put request to the database
+// TODO: listen for setseed in epic and dispatch PUT
 
 function emitResults(racers) {
   socket.emit("incoming-data", racers);
@@ -38,7 +40,6 @@ function emitResults(racers) {
 function DeleteButton({ setRacers }) {
   function confirm() {
     setRacers([]);
-    localStorage.removeItem("racers");
     socket.emit("incoming-data", []);
   }
   return (
@@ -57,7 +58,6 @@ function DeleteButton({ setRacers }) {
 }
 
 const save = (racers, isMessage = true) => {
-  localStorage.setItem("racers", JSON.stringify(racers));
   socket.emit("incoming-data", racers);
   if (isMessage) {
     message.success("Successfully saved data!");
@@ -77,7 +77,8 @@ function Manage({
   racers,
   setRacersToStore,
   getRacesByUser,
-  createRace
+  createRace,
+  races
 }) {
   const { user } = useAuth0();
   const { openCoverScreen } = useCover();
@@ -101,13 +102,7 @@ function Manage({
 
   useEffect(() => {
     getRacesByUser({ userId: user.sub });
-    // retrieve data from local storage
-    let savedRacers = localStorage.getItem("racers");
-    savedRacers = JSON.parse(savedRacers);
-    if (savedRacers) {
-      setRacersToStore(savedRacers);
-    }
-  }, [setRacersToStore, getRacesByUser, user]);
+  }, [getRacesByUser, user]);
 
   // listen for navigation and page refresh changes and save the racers
   useEffect(() => {
@@ -123,8 +118,9 @@ function Manage({
     emitResults(racers);
   });
 
-  const handleRaceSelect = () => {
-    console.info("HANDLE RACE SELECT");
+  const handleRaceSelect = raceId => {
+    const { results } = races.find(race => race.id === raceId);
+    setRacersToStore(results);
   };
 
   console.info("Manage->racers->", racers);
@@ -146,8 +142,14 @@ function Manage({
             onChange={handleRaceSelect}
             placeholder="Select Previously Created Race"
           >
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
+            {races &&
+              races.map(race => {
+                return (
+                  <Option value={race.id} key={race.id}>
+                    {race.name}
+                  </Option>
+                );
+              })}
           </Select>
         </Col>
         <Col span={8} className="delete-container">
@@ -170,7 +172,8 @@ function Manage({
 }
 
 const mapStateToProps = state => ({
-  racers: state.racers
+  racers: state.racers,
+  races: state.racesState.races
 });
 
 const mapDispatchToProps = dispatch => ({

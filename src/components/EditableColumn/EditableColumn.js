@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-
 import SelectPlace from "../SelectPlace/SelectPlace";
+import { useAuth0 } from "../../auth0";
 
 const EditableColumn = ({ row, heatIndex, resultIndex, auth }) => {
+  const { isAuthenticated } = useAuth0();
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
-    const isLoggedIn = auth.isLoggedIn;
     const isManagePage = window.location.href.includes("manage");
-    setCanEdit(isLoggedIn && isManagePage);
-  }, [auth.isLoggedIn]);
+    setCanEdit(isAuthenticated && isManagePage);
+  }, [isAuthenticated]);
 
   return canEdit ? (
     <SelectPlace row={row} heatIndex={heatIndex} resultIndex={resultIndex} />
@@ -19,8 +18,4 @@ const EditableColumn = ({ row, heatIndex, resultIndex, auth }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
-export default connect(mapStateToProps)(EditableColumn);
+export default EditableColumn;
