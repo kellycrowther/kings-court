@@ -111,7 +111,7 @@ const validationSchema = Yup.object().shape({
   organization: Yup.string().required("Organization is required")
 });
 
-const CreateRace = ({ createRace, setRacersToStore }) => {
+const CreateRace = ({ createRace, setCurrentRace }) => {
   const [uploaded, setUploaded] = useState(null);
   const [fileName, setFileName] = useState("");
   const [seeds, setSeeds] = useState([]);
@@ -147,7 +147,7 @@ const CreateRace = ({ createRace, setRacersToStore }) => {
       wsName: event.organization,
       results: seeds
     };
-    setRacersToStore(seeds);
+    setCurrentRace(race);
     createRace(race);
     closeCoverScreen();
   }

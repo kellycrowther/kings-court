@@ -9,8 +9,12 @@ import {
   getRacesByUserSuccess,
   getRacesByUserFailure,
   createRaceSuccess,
-  createRaceFailure
+  createRaceFailure,
+  updateRaceSuccess,
+  updateRaceFailure
 } from "../actions";
+import { message } from "antd";
+import { emitSocket } from "../../sockets/sockets";
 
 const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
 
@@ -47,4 +51,27 @@ export const createRace = actions$ => {
   );
 };
 
-export default combineEpics(getRaces, createRace);
+export const updateRace = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.UPDATE_RACE),
+    mergeMap(action => {
+      const raceId = action.payload.id;
+      return ajax
+        .put(`${endpoint}/races/${raceId}`, action.payload.results, {
+          "Content-Type": "application/json"
+        })
+        .pipe(
+          map(race => {
+            emitSocket(action.payload.results);
+            message.success("Successfully saved data!");
+            return updateRaceSuccess(race.response);
+          }),
+          takeUntil(actions$.ofType(RacesActions.UPDATE_RACE_SUCCESS)),
+          retry(2),
+          catchError(error => Observable.of(updateRaceFailure()))
+        );
+    })
+  );
+};
+
+export default combineEpics(getRaces, createRace, updateRace);

@@ -1,18 +1,3 @@
-export const setRacersToStore = racers => ({
-  type: "SET_RACERS",
-  racers
-});
-
-export const setSeed = payload => ({
-  type: "SET_SEED",
-  payload
-});
-
-export const RacerActions = {
-  SET_RACERS: "SET_RACERS",
-  SET_SEED: "SET_SEED"
-};
-
 export const setIsLoggedIn = payload => ({
   type: "SET_IS_LOGGED_IN",
   payload
@@ -29,7 +14,15 @@ export const RacesActions = {
 
   CREATE_RACE: "CREATE_RACE",
   CREATE_RACE_SUCCESS: "CREATE_RACE_SUCCESS",
-  CREATE_RACE_FAILURE: "CREATE_RACE_FAILURE"
+  CREATE_RACE_FAILURE: "CREATE_RACE_FAILURE",
+
+  SET_CURRENT_RACE: "SET_CURRENT_RACE",
+
+  SET_CURRENT_RACE_SEED: "SET_CURRENT_RACE_SEED",
+
+  UPDATE_RACE: "UPDATE_RACE",
+  UPDATE_RACE_SUCCESS: "UPDATE_RACE_SUCCESS",
+  UPDATE_RACE_FAILURE: "CUPDATE_RACE_FAILURE"
 };
 
 export const getRacesByUser = payload => ({
@@ -59,5 +52,30 @@ export const createRaceSuccess = payload => ({
 
 export const createRaceFailure = payload => ({
   type: RacesActions.CREATE_RACE_FAILURE,
+  payload
+});
+
+export const setCurrentRace = payload => ({
+  type: RacesActions.SET_CURRENT_RACE,
+  payload
+});
+
+export const setCurrentRaceSeed = payload => ({
+  type: RacesActions.SET_CURRENT_RACE_SEED,
+  payload
+});
+
+export const updateRace = payload => ({
+  type: RacesActions.UPDATE_RACE,
+  payload
+});
+
+export const updateRaceSuccess = payload => ({
+  type: RacesActions.UPDATE_RACE_SUCCESS,
+  payload
+});
+
+export const updateRaceFailure = payload => ({
+  type: RacesActions.UPDATE_RACE_FAILURE,
   payload
 });

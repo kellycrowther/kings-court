@@ -1,14 +1,16 @@
 import React from "react";
 import { Select } from "antd";
-import { setSeed } from "../../core/actions/index.js";
+import { setCurrentRaceSeed } from "../../core/actions/index.js";
 import { connect } from "react-redux";
 
 const { Option } = Select;
 
-const SelectPlace = ({ row, heatIndex, resultIndex, setSeed }) => {
+const SelectPlace = ({ row, heatIndex, resultIndex, setCurrentRaceSeed }) => {
   return (
     <Select
-      onSelect={place => setSeed({ row, heatIndex, resultIndex, place })}
+      onSelect={place =>
+        setCurrentRaceSeed({ row, heatIndex, resultIndex, place })
+      }
       value={row[resultIndex]}
       style={{ width: 80 }}
     >
@@ -23,8 +25,8 @@ const SelectPlace = ({ row, heatIndex, resultIndex, setSeed }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  setSeed: ({ row, heatIndex, resultIndex, place }) =>
-    dispatch(setSeed({ row, heatIndex, resultIndex, place }))
+  setCurrentRaceSeed: ({ row, heatIndex, resultIndex, place }) =>
+    dispatch(setCurrentRaceSeed({ row, heatIndex, resultIndex, place }))
 });
 
 export default connect(null, mapDispatchToProps)(SelectPlace);

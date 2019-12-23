@@ -1,22 +1,21 @@
 import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import { Button, Icon, Popconfirm, Row, Col, message, Select } from "antd";
-import socketIOClient from "socket.io-client";
+import { Button, Icon, Popconfirm, Row, Col, Select } from "antd";
 import "./Manage.css";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
 import { connect } from "react-redux";
 import {
-  setRacersToStore,
   getRacesByUser,
-  createRace
+  createRace,
+  updateRace,
+  setCurrentRace
 } from "../../core/actions";
 import { useAuth0 } from "../../auth0";
 import CreateRace from "../../components/CreateRace/CreateRace";
 import { useCover } from "../../context/cover";
+import { emitSocket } from "../../sockets/sockets";
 
 const { Parser } = require("json2csv");
-const endpoint = process.env.REACT_APP_API_ENDPOINT;
-const socket = socketIOClient(endpoint);
 const { Option } = Select;
 
 // TODO: DNS or no shows
@@ -33,14 +32,10 @@ const { Option } = Select;
 // TODO: save needs to make put request to the database
 // TODO: listen for setseed in epic and dispatch PUT
 
-function emitResults(racers) {
-  socket.emit("incoming-data", racers);
-}
-
 function DeleteButton({ setRacers }) {
   function confirm() {
     setRacers([]);
-    socket.emit("incoming-data", []);
+    emitSocket([]);
   }
   return (
     <Popconfirm
@@ -57,41 +52,27 @@ function DeleteButton({ setRacers }) {
   );
 }
 
-const save = (racers, isMessage = true) => {
-  socket.emit("incoming-data", racers);
-  if (isMessage) {
-    message.success("Successfully saved data!");
-  }
-};
-
-function SaveButton({ racers }) {
-  return (
-    <Button onClick={() => save(racers)} type="primary" className="save-button">
-      <Icon type="save" /> Save
-    </Button>
-  );
-}
-
 function Manage({
   history,
-  racers,
-  setRacersToStore,
   getRacesByUser,
   createRace,
-  races
+  races,
+  updateRace,
+  setCurrentRace,
+  currentRace
 }) {
   const { user } = useAuth0();
   const { openCoverScreen } = useCover();
 
   function openCreateRaceModal() {
     openCoverScreen(
-      <CreateRace createRace={createRace} setRacersToStore={setRacersToStore} />
+      <CreateRace createRace={createRace} setCurrentRace={setCurrentRace} />
     );
   }
 
   function downloadCSV() {
     const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(racers);
+    const csv = json2csvParser.parse(currentRace.results);
     let hiddenElement = document.createElement("a");
     // important to use URI and not blob so Safari iPad works
     hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
@@ -107,23 +88,23 @@ function Manage({
   // listen for navigation and page refresh changes and save the racers
   useEffect(() => {
     history.listen(() => {
-      save(racers, false);
+      updateRace(currentRace);
     });
     window.onbeforeunload = () => {
-      save(racers, false);
+      updateRace(currentRace);
     };
-  }, [racers, history]);
+  }, [currentRace, updateRace, history]);
 
   useEffect(() => {
-    emitResults(racers);
+    emitSocket(currentRace.results);
   });
 
   const handleRaceSelect = raceId => {
-    const { results } = races.find(race => race.id === raceId);
-    setRacersToStore(results);
+    const currentRace = races.find(race => race.id === raceId);
+    setCurrentRace(currentRace);
   };
 
-  console.info("Manage->racers->", racers);
+  console.info("Manage->currentRace->", currentRace);
 
   return (
     <div>
@@ -153,12 +134,18 @@ function Manage({
           </Select>
         </Col>
         <Col span={8} className="delete-container">
-          <SaveButton racers={racers} />
-          <DeleteButton setRacers={setRacersToStore} />
+          <Button
+            onClick={() => updateRace(currentRace)}
+            type="primary"
+            className="save-button"
+          >
+            <Icon type="save" /> Save
+          </Button>
+          {/* <DeleteButton setRacers={setCurrentRace} /> */}
         </Col>
       </Row>
 
-      <ResultsTables racers={racers} />
+      <ResultsTables racers={currentRace.results} />
 
       <Button
         onClick={downloadCSV}
@@ -172,14 +159,15 @@ function Manage({
 }
 
 const mapStateToProps = state => ({
-  racers: state.racers,
-  races: state.racesState.races
+  races: state.racesState.races,
+  currentRace: state.racesState.currentRace
 });
 
 const mapDispatchToProps = dispatch => ({
-  setRacersToStore: racers => dispatch(setRacersToStore(racers)),
   getRacesByUser: userId => dispatch(getRacesByUser(userId)),
-  createRace: race => dispatch(createRace(race))
+  createRace: race => dispatch(createRace(race)),
+  updateRace: race => dispatch(updateRace(race)),
+  setCurrentRace: race => dispatch(setCurrentRace(race))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Manage));

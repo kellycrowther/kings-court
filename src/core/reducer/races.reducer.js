@@ -1,15 +1,21 @@
 import { RacesActions } from "../actions";
+import { setSeed } from "../../helpers/setSeed";
 
 const INITIAL_STATE = {
   loading: {
     createRace: false,
-    getRacesByUser: false
+    getRacesByUser: false,
+    updateRace: false
   },
   loaded: {
     createRace: false,
-    getRacesByUser: false
+    getRacesByUser: false,
+    updateRace: false
   },
-  races: []
+  races: [],
+  currentRace: {
+    results: []
+  }
 };
 
 const racesState = (state = INITIAL_STATE, action) => {
@@ -96,6 +102,77 @@ const racesState = (state = INITIAL_STATE, action) => {
         loaded: {
           ...state.loaded,
           getRacesByUser: false
+        }
+      };
+    }
+
+    case RacesActions.SET_CURRENT_RACE: {
+      return {
+        ...state,
+        currentRace: action.payload
+      };
+    }
+
+    case RacesActions.SET_CURRENT_RACE_SEED: {
+      const racers = [...state.currentRace.results];
+      const { row, heatIndex, resultIndex, place } = action.payload;
+      const index = racers.findIndex(item => row.Bib === item.Bib);
+      racers[index][resultIndex] = place;
+      racers[index] = setSeed(row, racers, resultIndex, heatIndex);
+      return {
+        ...state,
+        currentRace: {
+          ...state.currentRace,
+          results: racers
+        }
+      };
+    }
+
+    case RacesActions.UPDATE_RACE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateRace: true
+        },
+        loaded: {
+          ...state.loaded,
+          updateRace: false
+        }
+      };
+    }
+
+    case RacesActions.UPDATE_RACE_SUCCESS: {
+      const updatedRace = action.payload;
+      const raceToUpdate = state.races.findIndex(
+        race => race.id === updatedRace.id
+      );
+      let updatedRaces = [...state.races];
+      updatedRaces[raceToUpdate] = updatedRace;
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateRace: false
+        },
+        loaded: {
+          ...state.loaded,
+          updateRace: true
+        },
+        races: updatedRaces
+      };
+    }
+
+    case RacesActions.UPDATE_RACE_FAILURE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateRace: false
+        },
+        loaded: {
+          ...state.loaded,
+          updateRace: false
         }
       };
     }
