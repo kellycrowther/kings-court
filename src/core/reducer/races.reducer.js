@@ -49,7 +49,7 @@ const racesState = (state = INITIAL_STATE, action) => {
           ...state.loaded,
           getRacesByUser: true
         },
-        races: [...action.payload]
+        races: action.payload
       };
     }
 

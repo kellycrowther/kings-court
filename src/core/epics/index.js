@@ -17,16 +17,25 @@ import {
 } from "../actions";
 import { message } from "antd";
 import { emitSocket } from "../../sockets/sockets";
+import { XMLHttpRequest } from "xmlhttprequest";
 
 const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
+
+function createXHR() {
+  return new XMLHttpRequest();
+}
 
 export const getRaces = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.GET_RACES_BY_USER),
     mergeMap(action => {
       const userIdParam = `?userId=${action.payload.userId}`;
-      return ajax.getJSON(`${endpoint}/races${userIdParam}`).pipe(
-        map(races => getRacesByUserSuccess(races)),
+      return ajax({
+        createXHR,
+        url: `${endpoint}/races${userIdParam}`,
+        method: "GET"
+      }).pipe(
+        map(races => getRacesByUserSuccess(races.response)),
         takeUntil(actions$.ofType(RacesActions.GET_RACES_BY_USER)),
         retry(2),
         catchError(error => of(getRacesByUserFailure()))

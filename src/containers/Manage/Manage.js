@@ -27,8 +27,7 @@ const { Option } = Select;
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 // TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
 // BUG: Heat filters disappear after page refresh
-// TODO: each race should have it's own websocket to connect to and broadcast events from
-// BUG: refreshing page with Social login like Google logs me out; issue https://community.auth0.com/t/getting-logged-out-after-refreshing-on-localhost-react-js-spa/28474/2
+// TODO: socket need to remember last emitted data for each room
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {

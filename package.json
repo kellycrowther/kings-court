@@ -19,10 +19,11 @@
     "rxjs": "^6.5.3",
     "socket.io-client": "^2.3.0",
     "styled-components": "^4.4.1",
+    "xmlhttprequest": "^1.8.0",
     "yup": "^0.28.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "deploy": "aws s3 sync build/ s3://kings-court.kellycrowther.io",
     "test": "react-scripts test",
