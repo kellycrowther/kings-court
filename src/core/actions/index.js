@@ -26,7 +26,15 @@ export const RacesActions = {
 
   DELETE_RACE: "DELETE_RACE",
   DELETE_RACE_SUCCESS: "DELETE_RACE_SUCCESS",
-  DELETE_RACE_FAILURE: "DELETE_RACE_FAILURE"
+  DELETE_RACE_FAILURE: "DELETE_RACE_FAILURE",
+
+  GET_RACE_BY_ID: "GET_RACE_BY_ID",
+  GET_RACE_BY_ID_SUCCESS: "GET_RACE_BY_ID_SUCCESS",
+  GET_RACE_BY_ID_FAILURE: "GET_RACE_BY_ID_FAILURE",
+
+  GET_ALL_RACES: "GET_ALL_RACES",
+  GET_ALL_RACES_SUCCESS: "GET_ALL_RACES_SUCCESS",
+  GET_ALL_RACES_FAILURE: "GET_ALL_RACES_FAILURE"
 };
 
 export const getRacesByUser = payload => ({
@@ -96,5 +104,35 @@ export const deleteRaceSuccess = payload => ({
 
 export const deleteRaceFailure = payload => ({
   type: RacesActions.DELETE_RACE_FAILURE,
+  payload
+});
+
+export const getRaceById = payload => ({
+  type: RacesActions.GET_RACE_BY_ID,
+  payload
+});
+
+export const getRaceByIdSuccess = payload => ({
+  type: RacesActions.GET_RACE_BY_ID_SUCCESS,
+  payload
+});
+
+export const getRaceByIdFailure = payload => ({
+  type: RacesActions.GET_RACE_BY_ID_FAILURE,
+  payload
+});
+
+export const getRaces = payload => ({
+  type: RacesActions.GET_ALL_RACES,
+  payload
+});
+
+export const getRacesSuccess = payload => ({
+  type: RacesActions.GET_ALL_RACES_SUCCESS,
+  payload
+});
+
+export const getRacesFailure = payload => ({
+  type: RacesActions.GET_ALL_RACES_FAILURE,
   payload
 });

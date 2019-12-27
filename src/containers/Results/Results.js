@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Select } from "antd";
-import socketIOClient from "socket.io-client";
+import { Row, Col, Select, Button } from "antd";
+// import socketIOClient from "socket.io-client";
 import "./Results.css";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
 import SearchRacers from "../../components/SearchRacers/SearchRacers";
+import { getRaceById, getRaces, setCurrentRace } from "../../core/actions";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 const { Option } = Select;
 
-export default function Results() {
-  const [racers, setRacers] = useState([]);
+const Results = ({
+  races,
+  currentRace,
+  getRaceById,
+  getAllRaces,
+  history,
+  setCurrentRace
+}) => {
+  // const [racers, setRacers] = useState([]);
   const [filteredRacers, setFilteredRacers] = useState([]);
-  const [races, setRaces] = useState([]);
+  // const [races, setRaces] = useState([]);
   const [raceId, setRaceId] = useState("");
 
+  /* Socket Code
   const endpoint = process.env.REACT_APP_API_ENDPOINT;
   const socket = socketIOClient(endpoint);
 
@@ -34,9 +45,31 @@ export default function Results() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [raceId]);
+  */
 
-  const handleSelectRace = race => {
-    setRaceId(race);
+  // hack to make sure user cannot alter current race results
+  // should protect route instead
+  useEffect(() => {
+    history.listen(() => {
+      setCurrentRace();
+    });
+    window.onbeforeunload = () => {
+      setCurrentRace();
+    };
+  }, [setCurrentRace, history]);
+
+  useEffect(() => {
+    setFilteredRacers(currentRace.results);
+  }, [currentRace]);
+
+  useEffect(() => {
+    getAllRaces();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSelectRace = raceId => {
+    setRaceId(raceId);
+    getRaceById(raceId);
   };
 
   return (
@@ -60,13 +93,40 @@ export default function Results() {
                 );
               })}
           </Select>
+          <Button
+            type="primary"
+            className="refresh-btn"
+            onClick={() => getRaceById(raceId)}
+          >
+            Refresh Results
+          </Button>
         </Col>
         <Col>
-          <SearchRacers racers={racers} setFilteredRacers={setFilteredRacers} />
+          <SearchRacers
+            racers={currentRace && currentRace.results}
+            setFilteredRacers={setFilteredRacers}
+          />
         </Col>
       </Row>
 
       <ResultsTables racers={filteredRacers} />
     </div>
   );
-}
+};
+
+const mapStateToProps = state => ({
+  races: state.racesState.races,
+  currentRace: state.racesState.currentRace
+});
+
+const mapDispatchToProps = dispatch => ({
+  getRaceById: id => dispatch(getRaceById({ id })),
+  getAllRaces: () => dispatch(getRaces()),
+  setCurrentRace: () =>
+    dispatch(setCurrentRace({ name: "", id: "", results: [] }))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Results));

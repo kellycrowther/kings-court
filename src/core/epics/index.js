@@ -13,10 +13,14 @@ import {
   updateRaceSuccess,
   updateRaceFailure,
   deleteRaceSuccess,
-  deleteRaceFailure
+  deleteRaceFailure,
+  getRaceByIdFailure,
+  getRaceByIdSuccess,
+  getRacesSuccess,
+  getRacesFailure
 } from "../actions";
 import { message } from "antd";
-import { emitSocket } from "../../sockets/sockets";
+// import { emitSocket } from "../../sockets/sockets";
 import { XMLHttpRequest } from "xmlhttprequest";
 
 const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
@@ -73,7 +77,7 @@ export const updateRace = actions$ => {
         })
         .pipe(
           map(race => {
-            emitSocket(race.response);
+            // emitSocket(race.response);
             message.success("Successfully saved data!");
             return updateRaceSuccess(race.response);
           }),
@@ -96,7 +100,7 @@ export const deleteRace = actions$ => {
         })
         .pipe(
           map(race => {
-            emitSocket([]);
+            // emitSocket([]);
             message.success("Successfully deleted the race!");
             return deleteRaceSuccess(race.response);
           }),
@@ -108,4 +112,47 @@ export const deleteRace = actions$ => {
   );
 };
 
-export default combineEpics(getRaces, createRace, updateRace, deleteRace);
+export const getRace = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.GET_RACE_BY_ID),
+    mergeMap(action => {
+      const id = action.payload.id;
+      return ajax({
+        url: `${endpoint}/races/${id}`,
+        method: "GET"
+      }).pipe(
+        map(races => getRaceByIdSuccess(races.response)),
+        takeUntil(actions$.ofType(RacesActions.GET_RACE_BY_ID_SUCCESS)),
+        retry(2),
+        catchError(error => of(getRaceByIdFailure()))
+      );
+    })
+  );
+};
+
+export const getAllRaces = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.GET_ALL_RACES),
+    mergeMap(action => {
+      return ajax({
+        createXHR,
+        url: `${endpoint}/races-all`,
+        method: "GET"
+      }).pipe(
+        map(races => getRacesSuccess(races.response)),
+        takeUntil(actions$.ofType(RacesActions.GET_ALL_RACES_SUCCESS)),
+        retry(2),
+        catchError(error => of(getRacesFailure()))
+      );
+    })
+  );
+};
+
+export default combineEpics(
+  getRaces,
+  createRace,
+  updateRace,
+  deleteRace,
+  getAllRaces,
+  getRace
+);

@@ -6,13 +6,17 @@ const INITIAL_STATE = {
     createRace: false,
     getRacesByUser: false,
     updateRace: false,
-    deleteRace: false
+    deleteRace: false,
+    getRaceById: false,
+    getAllRaces: false
   },
   loaded: {
     createRace: false,
     getRacesByUser: false,
     updateRace: false,
-    deleteRace: false
+    deleteRace: false,
+    getRaceById: false,
+    getAllRaces: false
   },
   races: [],
   currentRace: {
@@ -225,6 +229,92 @@ const racesState = (state = INITIAL_STATE, action) => {
         loaded: {
           ...state.loaded,
           deleteRace: false
+        }
+      };
+    }
+
+    case RacesActions.GET_RACE_BY_ID: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getRaceById: true
+        },
+        loaded: {
+          ...state.loaded,
+          getRaceById: false
+        }
+      };
+    }
+
+    case RacesActions.GET_RACE_BY_ID_SUCCESS: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getRaceById: false
+        },
+        loaded: {
+          ...state.loaded,
+          getRaceById: true
+        },
+        currentRace: action.payload
+      };
+    }
+
+    case RacesActions.GET_RACE_BY_ID_FAILURE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getRaceById: false
+        },
+        loaded: {
+          ...state.loaded,
+          getRaceById: false
+        }
+      };
+    }
+
+    case RacesActions.GET_ALL_RACES: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getAllRaces: true
+        },
+        loaded: {
+          ...state.loaded,
+          getAllRaces: false
+        }
+      };
+    }
+
+    case RacesActions.GET_ALL_RACES_SUCCESS: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getAllRaces: false
+        },
+        loaded: {
+          ...state.loaded,
+          getAllRaces: true
+        },
+        races: action.payload
+      };
+    }
+
+    case RacesActions.GET_ALL_RACES_FAILURE: {
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getAllRaces: false
+        },
+        loaded: {
+          ...state.loaded,
+          getAllRaces: false
         }
       };
     }

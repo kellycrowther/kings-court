@@ -14,7 +14,7 @@ import {
 import { useAuth0 } from "../../auth0";
 import CreateRace from "../../components/CreateRace/CreateRace";
 import { useCover } from "../../context/cover";
-import { emitSocket } from "../../sockets/sockets";
+// import { emitSocket } from "../../sockets/sockets";
 
 const { Parser } = require("json2csv");
 const { Option } = Select;
@@ -28,6 +28,8 @@ const { Option } = Select;
 // TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
 // BUG: Heat filters disappear after page refresh
 // TODO: socket need to remember last emitted data for each room
+// TODO: websocket server needs ssl certificate
+// TODO: protect the update and delete routes
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
@@ -94,7 +96,7 @@ function Manage({
   }, [currentRace, updateRace, history]);
 
   useEffect(() => {
-    emitSocket(currentRace);
+    // emitSocket(currentRace);
   });
 
   const handleRaceSelect = raceId => {
