@@ -46,12 +46,12 @@ const AppHeader = () => {
             Logout
           </Menu.Item>
         )}
-        {isAuthenticated && (
+        {/* {isAuthenticated && (
           <Menu.Item>
             <Icon type="profile" />
             Profile<Link to="/profile"></Link>
           </Menu.Item>
-        )}
+        )} */}
       </Menu>
     </Header>
   );

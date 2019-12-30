@@ -4,7 +4,12 @@ import { Row, Col, Select, Button } from "antd";
 import "./Results.css";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
 import SearchRacers from "../../components/SearchRacers/SearchRacers";
-import { getRaceById, getRaces, setCurrentRace } from "../../core/actions";
+import {
+  getRaceById,
+  getRaces,
+  setCurrentRace,
+  removeAllRaces
+} from "../../core/actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -16,7 +21,8 @@ const Results = ({
   getRaceById,
   getAllRaces,
   history,
-  setCurrentRace
+  setCurrentRace,
+  removeAllRaces
 }) => {
   // const [racers, setRacers] = useState([]);
   const [filteredRacers, setFilteredRacers] = useState([]);
@@ -52,11 +58,13 @@ const Results = ({
   useEffect(() => {
     history.listen(() => {
       setCurrentRace();
+      removeAllRaces();
     });
     window.onbeforeunload = () => {
       setCurrentRace();
+      removeAllRaces();
     };
-  }, [setCurrentRace, history]);
+  }, [setCurrentRace, removeAllRaces, history]);
 
   useEffect(() => {
     setFilteredRacers(currentRace.results);
@@ -123,7 +131,8 @@ const mapDispatchToProps = dispatch => ({
   getRaceById: id => dispatch(getRaceById({ id })),
   getAllRaces: () => dispatch(getRaces()),
   setCurrentRace: () =>
-    dispatch(setCurrentRace({ name: "", id: "", results: [] }))
+    dispatch(setCurrentRace({ name: "", id: "", results: [] })),
+  removeAllRaces: () => dispatch(removeAllRaces())
 });
 
 export default connect(

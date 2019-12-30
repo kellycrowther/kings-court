@@ -122,6 +122,13 @@ const racesState = (state = INITIAL_STATE, action) => {
       };
     }
 
+    case RacesActions.REMOVE_ALL_RACES: {
+      return {
+        ...state,
+        races: []
+      };
+    }
+
     case RacesActions.SET_CURRENT_RACE_SEED: {
       const racers = [...state.currentRace.results];
       const { row, heatIndex, resultIndex, place } = action.payload;

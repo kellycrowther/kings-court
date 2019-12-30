@@ -20,6 +20,8 @@ export const RacesActions = {
 
   SET_CURRENT_RACE_SEED: "SET_CURRENT_RACE_SEED",
 
+  REMOVE_ALL_RACES: "REMOVE_ALL_RACES",
+
   UPDATE_RACE: "UPDATE_RACE",
   UPDATE_RACE_SUCCESS: "UPDATE_RACE_SUCCESS",
   UPDATE_RACE_FAILURE: "CUPDATE_RACE_FAILURE",
@@ -134,5 +136,10 @@ export const getRacesSuccess = payload => ({
 
 export const getRacesFailure = payload => ({
   type: RacesActions.GET_ALL_RACES_FAILURE,
+  payload
+});
+
+export const removeAllRaces = payload => ({
+  type: RacesActions.REMOVE_ALL_RACES,
   payload
 });

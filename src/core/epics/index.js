@@ -135,7 +135,6 @@ export const getAllRaces = actions$ => {
     ofType(RacesActions.GET_ALL_RACES),
     mergeMap(action => {
       return ajax({
-        createXHR,
         url: `${endpoint}/races-all`,
         method: "GET"
       }).pipe(
