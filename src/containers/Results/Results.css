@@ -1,3 +1,28 @@
+.select-race {
+  width: 225px;
+}
+
 .refresh-btn {
   margin-left: 1rem;
+}
+
+.search-racers-results {
+  width: 200px;
+}
+
+@media only screen and (max-width: 600px) {
+  .results-row {
+    flex-direction: column;
+  }
+  .select-race {
+    margin: 1rem 0;
+    width: 100%;
+  }
+  .refresh-btn {
+    margin: 1rem 0;
+  }
+  .search-racers-results {
+    margin: 1rem 0;
+    width: 100%;
+  }
 }

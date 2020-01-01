@@ -82,13 +82,13 @@ const Results = ({
 
   return (
     <div>
-      <Row type="flex" justify="space-between">
+      <Row type="flex" justify="space-between" className="results-row">
         <Col>
           <h2>Results</h2>
         </Col>
         <Col>
           <Select
-            style={{ width: 300 }}
+            className="select-race"
             onChange={handleSelectRace}
             placeholder="Select Race"
           >
@@ -113,6 +113,7 @@ const Results = ({
           <SearchRacers
             racers={currentRace && currentRace.results}
             setFilteredRacers={setFilteredRacers}
+            className="search-racers-results"
           />
         </Col>
       </Row>

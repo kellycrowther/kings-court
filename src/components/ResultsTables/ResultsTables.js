@@ -77,7 +77,8 @@ const rounds = [
     resultName: "Round 1 Result",
     resultIndex: "Round1Result",
     seedName: "Seed",
-    seedIndex: "Seed"
+    seedIndex: "Seed",
+    bib: "Bib"
   },
   {
     name: "Round 2",
@@ -88,7 +89,8 @@ const rounds = [
     resultName: "Round 2 Result",
     resultIndex: "Round2Result",
     seedName: "Seed",
-    seedIndex: "Round2Seed"
+    seedIndex: "Round2Seed",
+    bib: "Bib"
   },
   {
     name: "Round 3",
@@ -99,7 +101,8 @@ const rounds = [
     resultName: "Round 3 Result",
     resultIndex: "Round3Result",
     seedName: "Seed",
-    seedIndex: "Round3Seed"
+    seedIndex: "Round3Seed",
+    bib: "Bib"
   },
   {
     name: "Final Results",
@@ -110,7 +113,8 @@ const rounds = [
     resultName: "Round 3 Result",
     resultIndex: "Round3Result",
     seedName: "Final Result",
-    seedIndex: "FinalResult"
+    seedIndex: "FinalResult",
+    bib: "Bib"
   }
 ];
 
@@ -149,9 +153,10 @@ function createColumns() {
       round.resultIndex,
       round.heatIndex
     );
+    const bibCol = new ResultColumn(round.bib, round.bib, true, false, false);
     if (round.key === "final-results") {
       // don't show heat or result column if it's the final results
-      round.columns.push(seedCol, nameCol, genderCol, teamCol);
+      round.columns.push(seedCol, nameCol, genderCol, teamCol, bibCol);
     } else {
       round.columns.push(
         seedCol,
@@ -159,13 +164,14 @@ function createColumns() {
         genderCol,
         teamCol,
         heatCol,
+        bibCol,
         resultCol
       );
     }
   }
 }
 
-function createTables(racers) {
+function createTables(racers, saveBtnComponent) {
   createColumns();
   const tables = [];
   for (let round of rounds) {
@@ -174,7 +180,7 @@ function createTables(racers) {
         <Row>
           <Col span={8} className="round-header">
             <h3>{round.name}</h3>
-            {/* <SaveButton racers={racers} /> */}
+            {saveBtnComponent}
           </Col>
         </Row>
         <Table
@@ -189,12 +195,12 @@ function createTables(racers) {
   return tables;
 }
 
-function ResultsTables({ racers }) {
+function ResultsTables({ racers, saveBtnComponent }) {
   useEffect(() => {
     heatFilters = createFilterOptions(racers);
   }, [racers]);
 
-  return <div>{createTables(racers)}</div>;
+  return <div>{createTables(racers, saveBtnComponent)}</div>;
 }
 
 export default withRouter(ResultsTables);

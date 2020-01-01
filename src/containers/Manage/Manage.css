@@ -31,3 +31,21 @@
 .download-final-btn {
   margin-top: 1rem;
 }
+
+.select-previous-race {
+  width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .manage-actions {
+    flex-direction: column;
+  }
+
+  .manage-actions .ant-col {
+    margin: 1rem 0;
+  }
+
+  .delete-container {
+    text-align: left;
+  }
+}

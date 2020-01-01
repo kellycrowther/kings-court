@@ -3,7 +3,7 @@ import { Input } from "antd";
 
 const { Search } = Input;
 
-export default function SearchRacers({ setFilteredRacers, racers }) {
+export default function SearchRacers({ setFilteredRacers, racers, className }) {
   const handleOnSearch = value => {
     let searchedReacers = racers.filter(racer => {
       const name = racer.Name.toLowerCase();
@@ -20,7 +20,7 @@ export default function SearchRacers({ setFilteredRacers, racers }) {
     <Search
       placeholder="Search name"
       onChange={e => handleOnSearch(e.target.value)}
-      style={{ width: 200 }}
+      className={className}
     />
   );
 }

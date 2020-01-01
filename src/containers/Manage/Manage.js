@@ -14,6 +14,7 @@ import {
 import { useAuth0 } from "../../auth0";
 import CreateRace from "../../components/CreateRace/CreateRace";
 import { useCover } from "../../context/cover";
+import * as uploadTemplate from "./upload-template.csv";
 // import { emitSocket } from "../../sockets/sockets";
 
 const { Parser } = require("json2csv");
@@ -30,6 +31,7 @@ const { Option } = Select;
 // TODO: socket need to remember last emitted data for each room
 // TODO: websocket server needs ssl certificate
 // TODO: protect the update and delete routes
+// TODO: refactor how SaveButton is passed to results table
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
@@ -48,6 +50,18 @@ function DeleteButton({ deleteRace, currentRace }) {
         Delete
       </Button>
     </Popconfirm>
+  );
+}
+
+function SaveButton({ updateRace, currentRace }) {
+  return (
+    <Button
+      onClick={() => updateRace(currentRace)}
+      type="primary"
+      className="save-button"
+    >
+      <Icon type="save" /> Save
+    </Button>
   );
 }
 
@@ -109,17 +123,35 @@ function Manage({
   return (
     <div>
       <h2>Manage</h2>
-      <Row className="manage-actions">
-        <Col span={8}>
+      <h4>Reminders!</h4>
+      <ul>
+        <li>
+          <strong>All racers need a place for each heat.</strong> There is no
+          DNF/DNS support.
+        </li>
+        <li>
+          Use the <a href={uploadTemplate}>CSV template</a> to upload results.
+          Do not remove or add columns. Use exactly 'Male' and 'Female' in the
+          Gender column.
+        </li>
+        <li>
+          When exporting your Excel or Numbers file to create the CSV, do not
+          include table names.
+        </li>
+        <li>Click Save to broadcast results.</li>
+        <li>Any issues, contact Kelly.</li>
+      </ul>
+      <Row type="flex" className="manage-actions">
+        <Col xs={24} md={8}>
           <h3>Create Race</h3>
           <Button onClick={openCreateRaceModal}>
             <Icon type="rocket" /> Create Race
           </Button>
         </Col>
-        <Col span={8}>
+        <Col xs={24} md={8}>
           <h3>Manage Existing Race</h3>
           <Select
-            style={{ width: 300 }}
+            className="select-previous-race"
             onChange={handleRaceSelect}
             placeholder="Select Previously Created Race"
           >
@@ -133,19 +165,18 @@ function Manage({
               })}
           </Select>
         </Col>
-        <Col span={8} className="delete-container">
-          <Button
-            onClick={() => updateRace(currentRace)}
-            type="primary"
-            className="save-button"
-          >
-            <Icon type="save" /> Save
-          </Button>
+        <Col xs={24} md={8} className="delete-container">
+          <SaveButton currentRace={currentRace} updateRace={updateRace} />
           <DeleteButton deleteRace={deleteRace} currentRace={currentRace} />
         </Col>
       </Row>
 
-      <ResultsTables racers={currentRace.results} />
+      <ResultsTables
+        racers={currentRace.results}
+        saveBtnComponent={
+          <SaveButton currentRace={currentRace} updateRace={updateRace} />
+        }
+      />
 
       <Button
         onClick={downloadCSV}
