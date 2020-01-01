@@ -54,25 +54,31 @@ export function setSeed(row, racers, roundResultKey, heatDataIndex) {
   );
 
   // handle the heat 1 edge since racers seeded 1-4 will just move on to next round
-  if (row.Round1Heat === 1 && row[roundResultKey] <= 4) {
+  if (
+    (row.Round1Heat === 1 || row.Round1Heat === 2) &&
+    row[roundResultKey] <= 4
+  ) {
     row[nextRoundSeed] = seedWithinCurrentRound;
     row[nextHeatIndex] = heatWithinCurrentRound;
   }
   // racers 5-6 increase their seed by two and increment the heat by two
-  if (row.Round1Heat === 1 && row[roundResultKey] > 4) {
+  if (
+    (row.Round1Heat === 1 || row.Round1Heat === 2) &&
+    row[roundResultKey] > 4
+  ) {
     row[nextRoundSeed] = seedWithinCurrentRound + 2;
     row[nextHeatIndex] = heatWithinCurrentRound + 2;
   }
 
   // handle all the heats between the first and the last heat
   // racers who are the top two in the heat move up two seeds and up a heat
-  if (row.Round1Heat > 1 && row[roundResultKey] <= 2) {
+  if (row.Round1Heat > 2 && row[roundResultKey] <= 2) {
     row[nextRoundSeed] = seedWithinCurrentRound - 2;
     row[nextHeatIndex] = heatWithinCurrentRound - 2;
   }
   // racers who placed in the middle two retain their current seed and heat
   if (
-    row.Round1Heat > 1 &&
+    row.Round1Heat > 2 &&
     row[roundResultKey] > 2 &&
     row[roundResultKey] <= 4
   ) {
@@ -80,7 +86,7 @@ export function setSeed(row, racers, roundResultKey, heatDataIndex) {
     row[nextHeatIndex] = heatWithinCurrentRound;
   }
   // racers who are the last two in their heat move down two seeds and increment heat by two
-  if (row.Round1Heat > 1 && row[roundResultKey] > 4) {
+  if (row.Round1Heat > 2 && row[roundResultKey] > 4) {
     row[nextRoundSeed] = seedWithinCurrentRound + 2;
     row[nextHeatIndex] = heatWithinCurrentRound + 2;
   }
