@@ -135,6 +135,11 @@ function Manage({
           Gender column.
         </li>
         <li>
+          All values for each column in the CSV <strong>REQUIRE</strong> a
+          value. Check the template for reference.
+        </li>
+        <li>All rows need values. Do not skip rows.</li>
+        <li>
           When exporting your Excel or Numbers file to create the CSV, do not
           include table names.
         </li>
