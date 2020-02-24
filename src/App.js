@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Breadcrumb, Layout, Spin } from "antd";
 import "./App.css";
@@ -11,7 +11,6 @@ import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import AppHeader from "./components/AppHeader/AppHeader";
 import { DialogProviders } from "./context";
-
 import { gql } from "@apollo/client";
 import { Subscription } from "@apollo/react-components";
 
@@ -19,35 +18,6 @@ const { Content, Footer } = Layout;
 
 const App = () => {
   const { loading } = useAuth0();
-
-  useEffect(() => {
-    console.info("FIRED");
-
-    // awsclient.hydrated().then(
-    //   function(client) {
-    //     // Listen for mutation results.
-    //     const observable = awsclient.subscribe({
-    //       query: ADD_BATTLESTAR_SUBSCRIPTION
-    //     });
-
-    //     console.info("HYDRATED");
-
-    //     const realtimeResults = function realtimeResults(data) {
-    //       console.info("KELLY");
-    //       console.log(data);
-    //     };
-
-    //     observable.subscribe({
-    //       next: realtimeResults,
-    //       complete: console.log,
-    //       error: console.log
-    //     });
-    //   },
-    //   e => {
-    //     console.info("ERROR: ", e);
-    //   }
-    // );
-  }, []);
 
   if (loading) {
     return <Spin />;
@@ -114,6 +84,7 @@ function Home() {
       </div>
       <Subscription subscription={gql(ADD_BATTLESTAR_SUBSCRIPTION)}>
         {({ data, loading }) => {
+          console.info("SUBSCRIBED DATA: ", data);
           return <div>New Item: {JSON.stringify(data)}</div>;
         }}
       </Subscription>
