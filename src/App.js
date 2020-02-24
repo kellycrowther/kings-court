@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Breadcrumb, Layout, Spin } from "antd";
 import "./App.css";
@@ -12,10 +12,42 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import AppHeader from "./components/AppHeader/AppHeader";
 import { DialogProviders } from "./context";
 
+import { gql } from "@apollo/client";
+import { Subscription } from "@apollo/react-components";
+
 const { Content, Footer } = Layout;
 
 const App = () => {
   const { loading } = useAuth0();
+
+  useEffect(() => {
+    console.info("FIRED");
+
+    // awsclient.hydrated().then(
+    //   function(client) {
+    //     // Listen for mutation results.
+    //     const observable = awsclient.subscribe({
+    //       query: ADD_BATTLESTAR_SUBSCRIPTION
+    //     });
+
+    //     console.info("HYDRATED");
+
+    //     const realtimeResults = function realtimeResults(data) {
+    //       console.info("KELLY");
+    //       console.log(data);
+    //     };
+
+    //     observable.subscribe({
+    //       next: realtimeResults,
+    //       complete: console.log,
+    //       error: console.log
+    //     });
+    //   },
+    //   e => {
+    //     console.info("ERROR: ", e);
+    //   }
+    // );
+  }, []);
 
   if (loading) {
     return <Spin />;
@@ -56,6 +88,13 @@ const App = () => {
 };
 
 function Home() {
+  const ADD_BATTLESTAR_SUBSCRIPTION = `
+    subscription AddBattleStar {
+      addBattleStar {
+        name
+      }
+    }
+  `;
   return (
     <div>
       <h2>Home</h2>
@@ -73,6 +112,11 @@ function Home() {
         If you are a interested in finding your results, go to the results page
         to see your live results.
       </div>
+      <Subscription subscription={gql(ADD_BATTLESTAR_SUBSCRIPTION)}>
+        {({ data, loading }) => {
+          return <div>New Item: {JSON.stringify(data)}</div>;
+        }}
+      </Subscription>
     </div>
   );
 }
