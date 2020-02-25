@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Breadcrumb, Layout, Spin } from "antd";
+import { Breadcrumb, Layout, Spin, Menu, Icon } from "antd";
 import "./App.css";
 
 import Manage from "./containers/Manage/Manage";
@@ -14,7 +14,8 @@ import { DialogProviders } from "./context";
 import { gql } from "@apollo/client";
 import { Subscription } from "@apollo/react-components";
 
-const { Content, Footer } = Layout;
+const { SubMenu } = Menu;
+const { Content, Footer, Sider } = Layout;
 
 const App = () => {
   const { loading } = useAuth0();
@@ -28,25 +29,61 @@ const App = () => {
       <Layout className="layout">
         <Router history={history}>
           <AppHeader />
-          <Content className="content">
-            <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
-            <div style={{ background: "#fff", padding: 24, minHeight: 280 }}>
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <PrivateRoute path="/manage" component={Manage} />
-                <Route path="/results">
-                  <Results />
-                </Route>
-                <PrivateRoute path="/profile" component={Profile} />
-              </Switch>
-            </div>
-          </Content>
+          <Layout>
+            <Sider
+              width={200}
+              style={{ background: "#fff", marginBottom: "24px" }}
+              breakpoint="lg"
+              collapsedWidth="0"
+            >
+              <Menu
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                defaultOpenKeys={["sub1"]}
+                style={{ height: "100%", borderRight: 0 }}
+              >
+                <SubMenu
+                  key="sub1"
+                  title={
+                    <span>
+                      <Icon type="rocket" />
+                      State Qualifiers
+                    </span>
+                  }
+                >
+                  <Menu.Item key="1">Qualifiers</Menu.Item>
+                  <Menu.Item key="2">Borderline</Menu.Item>
+                </SubMenu>
+                <Menu.Item key="sub2">
+                  <Icon type="crown" />
+                  <span>Kings Court</span>
+                </Menu.Item>
+              </Menu>
+            </Sider>
+            <Layout style={{ padding: "0 24px 24px" }}>
+              <Content className="content">
+                <Breadcrumb style={{ margin: "16px 0" }}>
+                  <Breadcrumb.Item>Home</Breadcrumb.Item>
+                  <Breadcrumb.Item>List</Breadcrumb.Item>
+                  <Breadcrumb.Item>App</Breadcrumb.Item>
+                </Breadcrumb>
+                <div
+                  style={{ background: "#fff", padding: 24, minHeight: 280 }}
+                >
+                  <Switch>
+                    <Route exact path="/">
+                      <Home />
+                    </Route>
+                    <PrivateRoute path="/manage" component={Manage} />
+                    <Route path="/results">
+                      <Results />
+                    </Route>
+                    <PrivateRoute path="/profile" component={Profile} />
+                  </Switch>
+                </div>
+              </Content>
+            </Layout>
+          </Layout>
           <Footer style={{ textAlign: "center" }}>
             kellycrowther.io ©{new Date().getFullYear()} Created by Kelly
             Crowther
