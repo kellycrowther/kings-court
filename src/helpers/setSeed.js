@@ -63,7 +63,10 @@ export function setSeed(row, racers, roundResultKey, heatDataIndex) {
   }
   // racers 5-6 increase their seed by two and increment the heat by two
   if (
-    (row.round1Heat === 1 || row.round1Heat === 2) &&
+    (row.round1Heat === 1 ||
+      row.round1Heat === 2 ||
+      row.round2Heat === 1 ||
+      row.round2Heat === 2) &&
     row[roundResultKey] > 4
   ) {
     row[nextRoundSeed] = seedWithinCurrentRound + 2;
@@ -72,7 +75,7 @@ export function setSeed(row, racers, roundResultKey, heatDataIndex) {
 
   // handle all the heats between the first and the last heat
   // racers who are the top two in the heat move up two seeds and up a heat
-  if (row.round1Heat > 2 && row[roundResultKey] <= 2) {
+  if ((row.round1Heat > 2 || row.round2Heat > 2) && row[roundResultKey] <= 2) {
     row[nextRoundSeed] = seedWithinCurrentRound - 2;
     row[nextHeatIndex] = heatWithinCurrentRound - 2;
   }
@@ -82,7 +85,7 @@ export function setSeed(row, racers, roundResultKey, heatDataIndex) {
     row[nextHeatIndex] = heatWithinCurrentRound;
   }
   // racers who are the last two in their heat move down two seeds and increment heat by two
-  if (row.round1Heat > 2 && row[roundResultKey] > 4) {
+  if ((row.round1Heat > 2 || row.round2Heat > 2) && row[roundResultKey] > 4) {
     row[nextRoundSeed] = seedWithinCurrentRound + 2;
     row[nextHeatIndex] = heatWithinCurrentRound + 2;
   }

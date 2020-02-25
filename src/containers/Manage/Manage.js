@@ -32,7 +32,6 @@ const { Option } = Select;
 // TODO: websocket server needs ssl certificate
 // TODO: protect the update and delete routes
 // TODO: refactor how SaveButton is passed to results table
-// BUG: Setseed method has a bug where racers are not seeded correctly from round 2 to round 3. Needs take into account current round
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
