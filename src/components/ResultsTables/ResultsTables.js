@@ -7,12 +7,12 @@ import EditableColumn from "../EditableColumn/EditableColumn";
 let heatFilters = [];
 
 function createFilterOptions(racers) {
-  const uniqueHeats = uniqBy(racers, "Round1Heat");
+  const uniqueHeats = uniqBy(racers, "round1Heat");
   return uniqueHeats
     .map(racer => {
       return {
-        text: racer.Round1Heat.toString(),
-        value: racer.Round1Heat
+        text: racer.round1Heat.toString(),
+        value: racer.round1Heat
       };
     })
     .sort((a, b) => a.value - b.value);
@@ -73,48 +73,48 @@ const rounds = [
     columns: [],
     key: "round-1",
     heatName: "Round 1 Heat",
-    heatIndex: "Round1Heat",
+    heatIndex: "round1Heat",
     resultName: "Round 1 Result",
-    resultIndex: "Round1Result",
+    resultIndex: "round1Result",
     seedName: "Seed",
-    seedIndex: "Seed",
-    bib: "Bib"
+    seedIndex: "seed",
+    bib: "bib"
   },
   {
     name: "Round 2",
     columns: [],
     key: "round-2",
     heatName: "Round 2 Heat",
-    heatIndex: "Round2Heat",
+    heatIndex: "round2Heat",
     resultName: "Round 2 Result",
-    resultIndex: "Round2Result",
+    resultIndex: "round2Result",
     seedName: "Seed",
-    seedIndex: "Round2Seed",
-    bib: "Bib"
+    seedIndex: "round2Seed",
+    bib: "bib"
   },
   {
     name: "Round 3",
     columns: [],
     key: "round-3",
     heatName: "Round 3 Heat",
-    heatIndex: "Round3Heat",
+    heatIndex: "round3Heat",
     resultName: "Round 3 Result",
-    resultIndex: "Round3Result",
+    resultIndex: "round3Result",
     seedName: "Seed",
-    seedIndex: "Round3Seed",
-    bib: "Bib"
+    seedIndex: "round3Seed",
+    bib: "bib"
   },
   {
     name: "Final Results",
     columns: [],
     key: "final-results",
     heatName: "Round 3 Heat",
-    heatIndex: "Round3Heat",
+    heatIndex: "round3Heat",
     resultName: "Round 3 Result",
-    resultIndex: "Round3Result",
+    resultIndex: "round3Result",
     seedName: "Final Result",
     seedIndex: "FinalResult",
-    bib: "Bib"
+    bib: "bib"
   }
 ];
 
@@ -128,11 +128,17 @@ function createColumns() {
       false,
       false
     );
-    const nameCol = new ResultColumn("Name", "Name", false, false, false);
-    const genderCol = new ResultColumn("Gender", "Gender", true, false, false);
+    const nameCol = new ResultColumn(
+      "Full Name",
+      "fullName",
+      false,
+      false,
+      false
+    );
+    const genderCol = new ResultColumn("Gender", "gender", true, false, false);
     const teamCol = new ResultColumn(
       "Team Name",
-      "Team name",
+      "teamName",
       true,
       false,
       false
@@ -186,7 +192,7 @@ function createTables(racers, saveBtnComponent) {
         <Table
           dataSource={racers}
           columns={round.columns}
-          rowKey="Bib"
+          rowKey="bib"
           scroll={{ x: 650 }}
         />
       </Fragment>

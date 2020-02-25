@@ -22,7 +22,7 @@ const StateProvider = ({ children }) => {
       case "SET_SEED": {
         const racers = [...state.racers];
         const { row, heatIndex, resultIndex, place } = action.payload;
-        const index = racers.findIndex(item => row.Bib === item.Bib);
+        const index = racers.findIndex(item => row.bib === item.bib);
         racers[index][resultIndex] = place;
         racers[index] = setSeed(row, racers, resultIndex, heatIndex);
         state = { ...state, state: [...racers] };

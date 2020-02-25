@@ -1,4 +1,4 @@
-Seed,Bib,Name,First name,Last name,Team name,Gender,Round1Result,Round2Result,Round3Result
+seed,bib,fullName,firstName,lastName,teamName,gender,round1Result,round2Result,round3Result
 1,79,Ann McColgan,Ann,McColgan,BEND,Female,,,
 2,77,Liv Downing,Liv,Downing,SUMMIT,Female,,,
 3,73,Katelyn Costello,Katelyn,Costello,RPA,Female,,,

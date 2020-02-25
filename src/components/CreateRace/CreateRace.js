@@ -58,16 +58,16 @@ function setHeats(csvData) {
   let currentMaleCount = 0;
   csvData.map(row => {
     // we are hardcoding the heats to have 6 and less skiers
-    if (row.Gender === "Female" && currentFemaleCount <= 6) {
-      row.Round1Heat = currentFemaleHeat;
+    if (row.gender === "Female" && currentFemaleCount <= 6) {
+      row.round1Heat = currentFemaleHeat;
       // add 1 to the skier count and reset if the count is equal to 6
       currentFemaleCount = currentFemaleCount < 6 ? currentFemaleCount + 1 : 1;
       // we are alternating odd / even heats with girls being odd number and boys even so add two to the initial heat
       currentFemaleHeat =
         currentFemaleCount < 6 ? currentFemaleHeat : currentFemaleHeat + 2;
     }
-    if (row.Gender === "Male" && currentMaleCount <= 6) {
-      row.Round1Heat = currentMaleHeat;
+    if (row.gender === "Male" && currentMaleCount <= 6) {
+      row.round1Heat = currentMaleHeat;
       currentMaleCount = currentMaleCount < 6 ? currentMaleCount + 1 : 1;
       currentMaleHeat =
         currentMaleCount < 6 ? currentMaleHeat : currentMaleHeat + 2;

@@ -132,7 +132,7 @@ const racesState = (state = INITIAL_STATE, action) => {
     case RacesActions.SET_CURRENT_RACE_SEED: {
       const racers = [...state.currentRace.results];
       const { row, heatIndex, resultIndex, place } = action.payload;
-      const index = racers.findIndex(item => row.Bib === item.Bib);
+      const index = racers.findIndex(item => row.bib === item.bib);
       racers[index][resultIndex] = place;
       racers[index] = setSeed(row, racers, resultIndex, heatIndex);
       return {
