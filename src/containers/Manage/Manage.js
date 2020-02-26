@@ -15,9 +15,9 @@ import { useAuth0 } from "../../auth0";
 import CreateRace from "../../components/CreateRace/CreateRace";
 import { useCover } from "../../context/cover";
 import * as uploadTemplate from "./upload-template.csv";
+import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
 // import { emitSocket } from "../../sockets/sockets";
 
-const { Parser } = require("json2csv");
 const { Option } = Select;
 
 // TODO: DNS or no shows
@@ -82,17 +82,6 @@ function Manage({
     openCoverScreen(
       <CreateRace createRace={createRace} setCurrentRace={setCurrentRace} />
     );
-  }
-
-  function downloadCSV() {
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(currentRace.results);
-    let hiddenElement = document.createElement("a");
-    // important to use URI and not blob so Safari iPad works
-    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
-    hiddenElement.target = "_blank";
-    hiddenElement.download = "final-results.csv";
-    hiddenElement.click();
   }
 
   useEffect(() => {
@@ -183,13 +172,7 @@ function Manage({
         }
       />
 
-      <Button
-        onClick={downloadCSV}
-        type="primary"
-        className="download-final-btn"
-      >
-        <Icon type="download" /> Download Final Results
-      </Button>
+      <DownloadCsv data={currentRace.results} />
     </div>
   );
 }

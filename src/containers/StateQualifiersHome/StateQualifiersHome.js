@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Table } from "antd";
+import { Table, Typography } from "antd";
 import { uniqBy } from "lodash";
 import UploadCsv from "../../components/UploadCsv/UploadCsv";
+import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
+
+const { Title } = Typography;
 
 function StateQualifiersHome() {
+  const [allRacers, setAllRacers] = useState([]);
   const [qualifiers, setQualifiers] = useState([]);
   const [tableColumns, setColumns] = useState([]);
 
@@ -58,9 +62,31 @@ function StateQualifiersHome() {
       .sort((a, b) => a.value - b.value);
   }
 
+  function findKidsWithThreeRaces(csvData) {
+    const kidsWithThreeRaces = [];
+    csvData.forEach((row, rowIndex) => {
+      let rowCount = 0;
+      csvData.forEach((item, itemIndex) => {
+        if (item.fullName.toLowerCase() === row.fullName.toLowerCase()) {
+          rowCount = rowCount + 1;
+        }
+        if (rowCount >= 3) {
+          row.fullName = row.fullName.toLowerCase();
+          kidsWithThreeRaces.push(row);
+        }
+        if (itemIndex + 1 === csvData.length) {
+          rowCount = 0;
+        }
+      });
+    });
+    const uniqueList = uniqBy(kidsWithThreeRaces, "fullName");
+    return uniqueList;
+  }
+
   const handleUpload = data => {
-    console.info("DATA: ", data);
-    setQualifiers(data);
+    setAllRacers(data);
+    const calculatedQualifiers = findKidsWithThreeRaces(data);
+    setQualifiers(calculatedQualifiers);
   };
 
   useEffect(() => {
@@ -79,7 +105,22 @@ function StateQualifiersHome() {
 
       <UploadCsv name="Upload Results" handleClick={handleUpload} />
 
+      <Title level={4} style={{ marginTop: "2rem" }}>
+        All Racers
+      </Title>
+      <Table dataSource={allRacers} columns={tableColumns} rowKey="uuid" />
+
+      <Title level={4} style={{ marginTop: "2rem" }}>
+        Qualified Racers
+      </Title>
       <Table dataSource={qualifiers} columns={tableColumns} rowKey="uuid" />
+
+      <DownloadCsv
+        btnName="Download Qualifiers"
+        fileName="qualifiers.csv"
+        data={qualifiers}
+        style={{ marginTop: "2rem" }}
+      />
     </div>
   );
 }
