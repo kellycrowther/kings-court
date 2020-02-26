@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Breadcrumb, Layout, Spin, Menu, Icon } from "antd";
 import "./App.css";
@@ -13,6 +13,7 @@ import AppHeader from "./components/AppHeader/AppHeader";
 import { DialogProviders } from "./context";
 import { gql } from "@apollo/client";
 import { Subscription } from "@apollo/react-components";
+import oisraLogo from "./assets/oisra-logo.png";
 
 const { SubMenu } = Menu;
 const { Content, Footer, Sider } = Layout;
@@ -24,6 +25,7 @@ const routes = [
     icon: "home",
     path: "/",
     subMenu: [],
+    headerMenu: [],
     key: "sub3"
   },
   {
@@ -43,7 +45,8 @@ const routes = [
         path: "/borderline",
         key: "2"
       }
-    ]
+    ],
+    headerMenu: []
   },
   {
     app: "kingsCourt",
@@ -51,12 +54,36 @@ const routes = [
     icon: "crown",
     path: "/kings-court",
     subMenu: [],
+    headerMenu: [
+      {
+        name: "Home",
+        path: "/kings-court",
+        icon: "home",
+        key: "1",
+        requiresAuthentication: false
+      },
+      {
+        name: "Manage",
+        path: "/kings-court/manage",
+        icon: "database",
+        key: "2",
+        requiresAuthentication: true
+      },
+      {
+        name: "Results",
+        path: "/kings-court/results",
+        icon: "dashboard",
+        key: "3",
+        requiresAuthentication: false
+      }
+    ],
     key: "sub2"
   }
 ];
 
 const App = () => {
   const { loading } = useAuth0();
+  const [currentHeaderMenu, setCurrentHeaderMenu] = useState([]);
 
   if (loading) {
     return <Spin />;
@@ -66,7 +93,6 @@ const App = () => {
     <DialogProviders>
       <Layout className="layout">
         <Router history={history}>
-          <AppHeader />
           <Layout>
             <Sider
               width={200}
@@ -74,10 +100,13 @@ const App = () => {
               breakpoint="lg"
               collapsedWidth="0"
             >
+              <div className="app-logo">
+                <img src={oisraLogo} alt="logo" />
+              </div>
               <Menu
                 mode="inline"
-                defaultSelectedKeys={["1"]}
-                defaultOpenKeys={["sub1"]}
+                defaultSelectedKeys={[]}
+                defaultOpenKeys={[]}
                 style={{ height: "100%", borderRight: 0 }}
               >
                 {routes.map(route => {
@@ -93,7 +122,12 @@ const App = () => {
                     >
                       {route.subMenu.map(sub => {
                         return (
-                          <Menu.Item key={sub.key}>
+                          <Menu.Item
+                            onClick={() =>
+                              setCurrentHeaderMenu(route.headerMenu)
+                            }
+                            key={sub.key}
+                          >
                             {sub.name}
                             <Link to={sub.path}></Link>
                           </Menu.Item>
@@ -101,7 +135,10 @@ const App = () => {
                       })}
                     </SubMenu>
                   ) : (
-                    <Menu.Item key={route.key}>
+                    <Menu.Item
+                      onClick={() => setCurrentHeaderMenu(route.headerMenu)}
+                      key={route.key}
+                    >
                       <Icon type={route.icon} />
                       <span>{route.name}</span>
                       <Link to={route.path}></Link>
@@ -110,13 +147,10 @@ const App = () => {
                 })}
               </Menu>
             </Sider>
-            <Layout style={{ padding: "0 24px 24px" }}>
-              <Content className="content">
-                <Breadcrumb style={{ margin: "16px 0" }}>
-                  <Breadcrumb.Item>Home</Breadcrumb.Item>
-                  <Breadcrumb.Item>List</Breadcrumb.Item>
-                  <Breadcrumb.Item>App</Breadcrumb.Item>
-                </Breadcrumb>
+            <Layout>
+              <AppHeader items={currentHeaderMenu} />
+              <Content className="content" style={{ padding: "0 24px 24px" }}>
+                <Breadcrumb style={{ margin: "16px 0" }}></Breadcrumb>
                 <div
                   style={{ background: "#fff", padding: 24, minHeight: 280 }}
                 >
@@ -130,8 +164,11 @@ const App = () => {
                     <Route exact path="/kings-court">
                       <KingsCourtHome />
                     </Route>
-                    <PrivateRoute path="/manage" component={Manage} />
-                    <Route path="/results">
+                    <PrivateRoute
+                      path="/kings-court/manage"
+                      component={Manage}
+                    />
+                    <Route path="/kings-court/results">
                       <Results />
                     </Route>
                     <PrivateRoute path="/profile" component={Profile} />

@@ -3,11 +3,22 @@ import { Link } from "react-router-dom";
 import { Menu, Icon, Layout } from "antd";
 import { useAuth0 } from "../../auth0";
 import { withRouter } from "react-router-dom";
+import "./AppHeader.css";
 
 const { Header } = Layout;
 
-const AppHeader = () => {
+const AppHeader = ({ items }) => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  items = items.filter(item => {
+    if (!item.requiresAuthentication) {
+      return item;
+    }
+
+    if (item.requiresAuthentication && isAuthenticated) {
+      return item;
+    }
+    return null;
+  });
   return (
     <Header className="custom-header">
       <div className="logo" />
@@ -17,23 +28,15 @@ const AppHeader = () => {
         defaultSelectedKeys={["2"]}
         style={{ lineHeight: "64px" }}
       >
-        <Menu.Item key="home">
-          <Icon type="home" />
-          Home
-          <Link to="/"></Link>
-        </Menu.Item>
-        {isAuthenticated && (
-          <Menu.Item>
-            <Icon type="database" />
-            Manage
-            <Link to="/manage"></Link>
-          </Menu.Item>
-        )}
-        <Menu.Item>
-          <Icon type="dashboard" />
-          Results
-          <Link to="/results"></Link>
-        </Menu.Item>
+        {items.map(item => {
+          return (
+            <Menu.Item key={item.key}>
+              <Icon type={item.icon} />
+              {item.name}
+              <Link to={item.path}></Link>
+            </Menu.Item>
+          );
+        })}
         {!isAuthenticated && (
           <Menu.Item onClick={() => loginWithRedirect({})}>
             <Icon type="login" />
