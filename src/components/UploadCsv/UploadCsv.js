@@ -1,6 +1,7 @@
 import React, { useRef, useState, Fragment } from "react";
 import { Button, Icon, message } from "antd";
 import Papa from "papaparse";
+import { v4 as uuidv4 } from "uuid";
 
 function readCSV(info) {
   let reader = new FileReader();
@@ -28,6 +29,8 @@ function readCSV(info) {
         skipEmptyLines: true,
         header: true
       });
+      // create a unique id
+      csvData.data.map(row => (row["uuid"] = uuidv4()));
       if (csvData.errors.length > 0) {
         message.error(
           "There was a problem parsing the CSV. Make sure the CSV is in the correct format. Only include column headers and associated data.",
