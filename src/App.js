@@ -10,76 +10,15 @@ import history from "./helpers/history";
 import Profile from "./components/Profile/Profile";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import AppHeader from "./components/AppHeader/AppHeader";
+import StateQualifiersHome from "./containers/StateQualifiersHome/StateQualifiersHome";
+import KingsCourtHome from "./containers/KingsCourtHome/KingsCourtHome";
+import Home from "./containers/Home/Home";
 import { DialogProviders } from "./context";
-import { gql } from "@apollo/client";
-import { Subscription } from "@apollo/react-components";
 import oisraLogo from "./assets/oisra-logo.png";
+import { routes } from "./routes/routes";
 
 const { SubMenu } = Menu;
 const { Content, Footer, Sider } = Layout;
-
-const routes = [
-  {
-    app: "home",
-    name: "Home",
-    icon: "home",
-    path: "/",
-    subMenu: [],
-    headerMenu: [],
-    key: "sub3"
-  },
-  {
-    app: "stateQualifiers",
-    name: "State Qualifiers",
-    icon: "rocket",
-    path: "/state-qualifiers",
-    key: "sub1",
-    subMenu: [
-      {
-        name: "Qualifiers",
-        path: "/state-qualifiers",
-        key: "1"
-      },
-      {
-        name: "Borderline",
-        path: "/borderline",
-        key: "2"
-      }
-    ],
-    headerMenu: []
-  },
-  {
-    app: "kingsCourt",
-    name: "Kings Court",
-    icon: "crown",
-    path: "/kings-court",
-    subMenu: [],
-    headerMenu: [
-      {
-        name: "Home",
-        path: "/kings-court",
-        icon: "home",
-        key: "1",
-        requiresAuthentication: false
-      },
-      {
-        name: "Manage",
-        path: "/kings-court/manage",
-        icon: "database",
-        key: "2",
-        requiresAuthentication: true
-      },
-      {
-        name: "Results",
-        path: "/kings-court/results",
-        icon: "dashboard",
-        key: "3",
-        requiresAuthentication: false
-      }
-    ],
-    key: "sub2"
-  }
-];
 
 const App = () => {
   const { loading } = useAuth0();
@@ -186,64 +125,5 @@ const App = () => {
     </DialogProviders>
   );
 };
-
-function Home() {
-  return (
-    <div>
-      <h2>Home</h2>
-      <p>
-        Welcome to the OISRA Nordic management tool. Choose an application to
-        run on the left.
-      </p>
-    </div>
-  );
-}
-
-function StateQualifiersHome() {
-  return (
-    <div>
-      <h2>State Qualifiers</h2>
-      <p>
-        Welcome to the State Qualifiers tool. Simply upload your formatted
-        results to calculate the state qualifiers.
-      </p>
-    </div>
-  );
-}
-
-function KingsCourtHome() {
-  const ADD_BATTLESTAR_SUBSCRIPTION = `
-    subscription AddBattleStar {
-      addBattleStar {
-        name
-      }
-    }
-  `;
-  return (
-    <div>
-      <h2>Kings Court</h2>
-      <p>
-        Head over to the Manage page for the magic.{" "}
-        <span role="img" aria-label="sparkles">
-          🎇
-        </span>
-      </p>
-      <div>
-        If you are managing a race, login to create your race, upload your
-        seeded racers, and begin setting their places.
-      </div>
-      <div>
-        If you are a interested in finding your results, go to the results page
-        to see your live results.
-      </div>
-      <Subscription subscription={gql(ADD_BATTLESTAR_SUBSCRIPTION)}>
-        {({ data, loading }) => {
-          console.info("SUBSCRIBED DATA: ", data);
-          return <div>New Item: {JSON.stringify(data)}</div>;
-        }}
-      </Subscription>
-    </div>
-  );
-}
 
 export default App;
