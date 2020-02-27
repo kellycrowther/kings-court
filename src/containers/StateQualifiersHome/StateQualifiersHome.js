@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography } from "antd";
+import { Table, Typography, Select, Row, Col } from "antd";
 import { uniqBy } from "lodash";
 import UploadCsv from "../../components/UploadCsv/UploadCsv";
 import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
+import "./StateQualifiersHome.css";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 function StateQualifiersHome() {
   const [allRacers, setAllRacers] = useState([]);
   const [qualifiers, setQualifiers] = useState([]);
   const [tableColumns, setColumns] = useState([]);
+  const [numberOfRacesToQualify, setNumberOfRacesToQualify] = useState(3);
 
   const columns = [
     {
@@ -70,7 +73,7 @@ function StateQualifiersHome() {
         if (item.fullName.toLowerCase() === row.fullName.toLowerCase()) {
           rowCount = rowCount + 1;
         }
-        if (rowCount >= 3) {
+        if (rowCount >= numberOfRacesToQualify) {
           row.fullName = row.fullName.toLowerCase();
           kidsWithThreeRaces.push(row);
         }
@@ -95,6 +98,11 @@ function StateQualifiersHome() {
     setColumns(columns);
   }, [qualifiers]);
 
+  useEffect(() => {
+    const calculatedQualifiers = findKidsWithThreeRaces(allRacers);
+    setQualifiers(calculatedQualifiers);
+  }, [numberOfRacesToQualify]);
+
   return (
     <div>
       <h2>State Qualifiers</h2>
@@ -102,8 +110,24 @@ function StateQualifiersHome() {
         Welcome to the State Qualifiers tool. Simply upload your formatted
         results to calculate the state qualifiers.
       </p>
-
       <UploadCsv name="Upload Results" handleClick={handleUpload} />
+
+      <div className="select-qualifying-races">
+        <strong>Select number of races to qualify.</strong>
+        <strong className="d-block">*Defaults to 3 races.</strong>
+      </div>
+      <Select
+        onSelect={selection => setNumberOfRacesToQualify(selection)}
+        style={{ width: 100 }}
+        defaultValue={3}
+      >
+        <Option value={1}>1</Option>
+        <Option value={2}>2</Option>
+        <Option value={3}>3</Option>
+        <Option value={4}>4</Option>
+        <Option value={5}>5</Option>
+        <Option value={6}>6</Option>
+      </Select>
 
       <Title level={4} style={{ marginTop: "2rem" }}>
         All Racers
