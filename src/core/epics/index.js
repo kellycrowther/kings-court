@@ -51,19 +51,54 @@ export const getRaces = actions$ => {
 };
 
 export const createRace = actions$ => {
+  // using variable pattern in body so the array of result data can be sent
   return actions$.pipe(
     ofType(RacesActions.CREATE_RACE),
     mergeMap(action => {
-      return ajax
-        .post(`${endpoint}/races`, action.payload, {
-          "Content-Type": "application/json"
-        })
-        .pipe(
-          map(race => createRaceSuccess(race.response)),
-          takeUntil(actions$.ofType(RacesActions.CREATE_RACE)),
-          retry(2),
-          catchError(error => of(createRaceFailure()))
-        );
+      const { name, userId, results, wsName } = action.payload;
+      const body = {
+        query: `mutation putRace($name: String! $userId: String! $wsName: String $results: [ResultInput] ) {
+            createRace(
+              input: { 
+                name: $name, 
+                userId: $userId, 
+                organization: $wsName
+                results: $results 
+              }
+            ) { name, 
+              userId, 
+              results { 
+                teamName
+                round1Heat
+                round1Result
+                seed
+                round2Result
+                round3Result
+                bib
+                firstName
+                lastName
+                fullName
+                gender
+                uuid
+              } 
+            } 
+          }`,
+        variables: { name, userId, results, wsName }
+      };
+      return ajax({
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: body
+      }).pipe(
+        map(xhr => createRaceSuccess(xhr.response.data.createRace)),
+        takeUntil(actions$.ofType(RacesActions.CREATE_RACE_SUCCESS)),
+        retry(2),
+        catchError(error => of(createRaceFailure()))
+      );
     })
   );
 };
@@ -157,28 +192,6 @@ export const getAllRaces = actions$ => {
   );
 };
 
-/*
-****
-**** Deprecated in favor of GraphQL - Leaving for reference ****
-****
-export const getAllRaces = actions$ => {
-  return actions$.pipe(
-    ofType(RacesActions.GET_ALL_RACES),
-    mergeMap(action => {
-      return ajax({
-        url: `${endpoint}/races-all`,
-        method: "GET"
-      }).pipe(
-        map(races => getRacesSuccess(races.response)),
-        takeUntil(actions$.ofType(RacesActions.GET_ALL_RACES_SUCCESS)),
-        retry(2),
-        catchError(error => of(getRacesFailure()))
-      );
-    })
-  );
-};
-*/
-
 export default combineEpics(
   getRaces,
   createRace,
@@ -187,3 +200,44 @@ export default combineEpics(
   getAllRaces,
   getRace
 );
+
+/*
+****
+**** Deprecated in favor of GraphQL - Leaving for reference ****
+****
+  export const getAllRaces = actions$ => {
+    return actions$.pipe(
+      ofType(RacesActions.GET_ALL_RACES),
+      mergeMap(action => {
+        return ajax({
+          url: `${endpoint}/races-all`,
+          method: "GET"
+        }).pipe(
+          map(races => getRacesSuccess(races.response)),
+          takeUntil(actions$.ofType(RacesActions.GET_ALL_RACES_SUCCESS)),
+          retry(2),
+          catchError(error => of(getRacesFailure()))
+        );
+      })
+    );
+  };
+
+  export const createRace = actions$ => {
+    return actions$.pipe(
+      ofType(RacesActions.CREATE_RACE),
+      mergeMap(action => {
+        return ajax
+          .post(`${endpoint}/races`, action.payload, {
+            "Content-Type": "application/json"
+          })
+          .pipe(
+            map(race => createRaceSuccess(race.response)),
+            takeUntil(actions$.ofType(RacesActions.CREATE_RACE_SUCCESS)),
+            retry(2),
+            catchError(error => of(createRaceFailure()))
+          );
+      })
+    );
+  };
+
+*/

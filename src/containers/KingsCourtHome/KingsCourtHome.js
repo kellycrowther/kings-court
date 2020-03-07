@@ -4,8 +4,8 @@ import { Subscription } from "@apollo/react-components";
 
 function KingsCourtHome() {
   const ADD_BATTLESTAR_SUBSCRIPTION = `
-    subscription AddBattleStar {
-      addBattleStar {
+    subscription addRace {
+      addRace {
         name
       }
     }
