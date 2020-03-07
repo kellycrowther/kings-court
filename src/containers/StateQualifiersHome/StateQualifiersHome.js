@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Select, Row, Col } from "antd";
+import { Table, Typography, Select } from "antd";
 import { uniqBy } from "lodash";
 import UploadCsv from "../../components/UploadCsv/UploadCsv";
 import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
@@ -96,12 +96,14 @@ function StateQualifiersHome() {
     let schoolCol = columns.find(col => col.key === "school");
     schoolCol.filters = createFilterOptions();
     setColumns(columns);
-  }, [qualifiers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qualifiers, columns]);
 
   useEffect(() => {
     const calculatedQualifiers = findKidsWithThreeRaces(allRacers);
     setQualifiers(calculatedQualifiers);
-  }, [numberOfRacesToQualify]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numberOfRacesToQualify, allRacers]);
 
   return (
     <div>

@@ -24,6 +24,8 @@ import { message } from "antd";
 import { XMLHttpRequest } from "xmlhttprequest";
 
 const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
+const graphql_endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT;
+const graphql_api_key = process.env.REACT_APP_GRAPHQL_API_KEY;
 
 function createXHR() {
   return new XMLHttpRequest();
@@ -131,6 +133,35 @@ export const getRace = actions$ => {
 };
 
 export const getAllRaces = actions$ => {
+  // new lines will break these queries
+  const GET_ALL_RACES = `listRaces { id, name, results { teamName, fullName, firstName, lastName, bib, seed, gender, round1Result, round1Heat, round2Result, round3Result, uuid } }`;
+
+  return actions$.pipe(
+    ofType(RacesActions.GET_ALL_RACES),
+    mergeMap(action => {
+      return ajax({
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: `{ "query": "{ ${GET_ALL_RACES} }" }`
+      }).pipe(
+        map(xhr => getRacesSuccess(xhr.response.data.listRaces)),
+        takeUntil(actions$.ofType(RacesActions.GET_ALL_RACES_SUCCESS)),
+        retry(2),
+        catchError(error => of(getRacesFailure()))
+      );
+    })
+  );
+};
+
+/*
+****
+**** Deprecated in favor of GraphQL - Leaving for reference ****
+****
+export const getAllRaces = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.GET_ALL_RACES),
     mergeMap(action => {
@@ -146,6 +177,7 @@ export const getAllRaces = actions$ => {
     })
   );
 };
+*/
 
 export default combineEpics(
   getRaces,
