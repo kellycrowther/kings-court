@@ -153,12 +153,41 @@ export const getRace = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.GET_RACE_BY_ID),
     mergeMap(action => {
-      const id = action.payload.id;
+      const { id } = action.payload;
+      const body = {
+        query: `query getRace($id: ID! ) {
+          getRace(
+            id: $id
+          ) { 
+            id
+            name
+            results {
+              teamName
+              fullName
+              firstName
+              lastName
+              bib
+              seed
+              gender
+              round1Result
+              round1Heat
+              round2Result
+              round3Result
+            }
+          } 
+        }`,
+        variables: { id }
+      };
       return ajax({
-        url: `${endpoint}/races/${id}`,
-        method: "GET"
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: body
       }).pipe(
-        map(races => getRaceByIdSuccess(races.response)),
+        map(xhr => getRaceByIdSuccess(xhr.response.data.getRace)),
         takeUntil(actions$.ofType(RacesActions.GET_RACE_BY_ID_SUCCESS)),
         retry(2),
         catchError(error => of(getRaceByIdFailure()))
@@ -239,5 +268,23 @@ export default combineEpics(
       })
     );
   };
+
+  export const getRace = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.GET_RACE_BY_ID),
+    mergeMap(action => {
+      const id = action.payload.id;
+      return ajax({
+        url: `${endpoint}/races/${id}`,
+        method: "GET"
+      }).pipe(
+        map(races => getRaceByIdSuccess(races.response)),
+        takeUntil(actions$.ofType(RacesActions.GET_RACE_BY_ID_SUCCESS)),
+        retry(2),
+        catchError(error => of(getRaceByIdFailure()))
+      );
+    })
+  );
+};
 
 */
