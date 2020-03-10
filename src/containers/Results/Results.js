@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Select, Button } from "antd";
-// import socketIOClient from "socket.io-client";
 import "./Results.css";
 import ResultsTables from "../../components/ResultsTables/ResultsTables";
 import SearchRacers from "../../components/SearchRacers/SearchRacers";
@@ -12,8 +11,35 @@ import {
 } from "../../core/actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import { Subscription } from "@apollo/react-components";
+import { gql } from "@apollo/client";
 
 const { Option } = Select;
+
+// subscriptions will not work locally
+// make sure to change the Insomnia environment too
+const MODIFY_RACE_SUBSCRIPTION = `
+  subscription ModifiedRaceSub {
+    modifyRace {
+      name
+      id
+      results {
+        teamName
+        round1Heat
+        round1Result
+        seed
+        round2Result
+        round3Result
+        bib
+        firstName
+        lastName
+        fullName
+        gender
+        uuid
+      }
+    }
+  }
+`;
 
 const Results = ({
   races,
@@ -24,34 +50,8 @@ const Results = ({
   setCurrentRace,
   removeAllRaces
 }) => {
-  // const [racers, setRacers] = useState([]);
   const [filteredRacers, setFilteredRacers] = useState([]);
-  // const [races, setRaces] = useState([]);
   const [raceId, setRaceId] = useState("");
-
-  /* Socket Code
-  const endpoint = process.env.REACT_APP_API_ENDPOINT;
-  const socket = socketIOClient(endpoint);
-
-  useEffect(() => {
-    socket.on("outgoing-data", data => {
-      setRaces(data.races);
-    });
-
-    return () => {
-      socket.off("disconnected");
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    socket.on(raceId, data => {
-      setRacers(data.race.results);
-      setFilteredRacers(data.race.results);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [raceId]);
-  */
 
   // hack to make sure user cannot alter current race results
   // should protect route instead
@@ -118,6 +118,23 @@ const Results = ({
         </Col>
       </Row>
 
+      {/* subscription will not work locally, must use production environment */}
+      <Subscription subscription={gql(MODIFY_RACE_SUBSCRIPTION)}>
+        {({ data, loading }) => {
+          console.info("SUBSCRIBED DATA: ", data);
+
+          // if results and race id matches currently selected race, set the filtered racers with the new data
+          if (
+            data &&
+            data.modifyRace &&
+            data.modifyRace.results &&
+            data.id === currentRace.id
+          ) {
+            setFilteredRacers(data.modifyRace.results);
+          }
+          return <h1>New Item: {JSON.stringify(data)}</h1>;
+        }}
+      </Subscription>
       <ResultsTables racers={filteredRacers} />
     </div>
   );
