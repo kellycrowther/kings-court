@@ -15,13 +15,14 @@ import { AWSAppSyncClient } from "aws-appsync";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { Rehydrated } from "./components/Rehydrated/Rehydrated";
 
+// subscriptions will not work locally
+// make sure to change the React environment and Insomnia environment
 const awsclient = new AWSAppSyncClient({
-  url:
-    "https://7qtr2hlfubgexfxiipreajpkki.appsync-api.us-west-2.amazonaws.com/graphql",
+  url: process.env.REACT_APP_GRAPHQL_ENDPOINT,
   region: "us-west-1",
   auth: {
     type: "API_KEY",
-    apiKey: "da2-7kfthh3ixfcqhgbu2jxilkyimy"
+    apiKey: process.env.REACT_APP_GRAPHQL_API_KEY
   }
 });
 

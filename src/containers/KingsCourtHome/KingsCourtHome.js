@@ -3,8 +3,10 @@ import { gql } from "@apollo/client";
 import { Subscription } from "@apollo/react-components";
 
 function KingsCourtHome() {
-  const ADD_BATTLESTAR_SUBSCRIPTION = `
-    subscription addRace {
+  // subscriptions will not work locally
+  // make sure to change the Insomnia environment too
+  const ADD_RACE_SUBSCRIPTION = `
+    subscription AddedRaceSub {
       addRace {
         name
       }
@@ -27,10 +29,10 @@ function KingsCourtHome() {
         If you are a interested in finding your results, go to the results page
         to see your live results.
       </div>
-      <Subscription subscription={gql(ADD_BATTLESTAR_SUBSCRIPTION)}>
+      <Subscription subscription={gql(ADD_RACE_SUBSCRIPTION)}>
         {({ data, loading }) => {
           console.info("SUBSCRIBED DATA: ", data);
-          return <div>New Item: {JSON.stringify(data)}</div>;
+          return <h1>New Item: {JSON.stringify(data)}</h1>;
         }}
       </Subscription>
     </div>
