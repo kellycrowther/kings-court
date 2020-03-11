@@ -89,14 +89,14 @@ function Manage({
   }, [getRacesByUser, user]);
 
   // listen for navigation and page refresh changes and save the racers
-  useEffect(() => {
-    history.listen(() => {
-      updateRace(currentRace);
-    });
-    window.onbeforeunload = () => {
-      updateRace(currentRace);
-    };
-  }, [currentRace, updateRace, history]);
+  // useEffect(() => {
+  //   history.listen(() => {
+  //     updateRace(currentRace);
+  //   });
+  //   window.onbeforeunload = () => {
+  //     updateRace(currentRace);
+  //   };
+  // }, [currentRace, updateRace, history]);
 
   useEffect(() => {
     // emitSocket(currentRace);

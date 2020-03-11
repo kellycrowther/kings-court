@@ -2,7 +2,14 @@ import "rxjs";
 import { combineEpics } from "redux-observable";
 import { ajax } from "rxjs/ajax";
 import { of } from "rxjs";
-import { mergeMap, takeUntil, map, retry, catchError } from "rxjs/operators";
+import {
+  mergeMap,
+  takeUntil,
+  map,
+  retry,
+  catchError,
+  filter
+} from "rxjs/operators";
 import { ofType } from "redux-observable";
 import {
   RacesActions,
@@ -40,16 +47,22 @@ export const getRaces = actions$ => {
               userId
               results {
                 teamName
-                fullName
-                firstName
-                lastName
-                bib
-                seed
-                gender
-                round1Result
                 round1Heat
+                round2Heat
+                round3Heat
+                round1Result
+                seed
+                round2Seed
+                round3Seed
                 round2Result
                 round3Result
+                finalResult
+                bib
+                firstName
+                lastName
+                fullName
+                gender
+                uuid
               }
             } 
           }`,
@@ -95,10 +108,15 @@ export const createRace = actions$ => {
               results { 
                 teamName
                 round1Heat
+                round2Heat
+                round3Heat
                 round1Result
                 seed
+                round2Seed
+                round3Seed
                 round2Result
                 round3Result
+                finalResult
                 bib
                 firstName
                 lastName
@@ -131,22 +149,60 @@ export const createRace = actions$ => {
 export const updateRace = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.UPDATE_RACE),
+    filter(({ payload }) => payload.id !== ""),
     mergeMap(action => {
-      const raceId = action.payload.id;
-      return ajax
-        .put(`${endpoint}/races/${raceId}`, action.payload.results, {
-          "Content-Type": "application/json"
-        })
-        .pipe(
-          map(race => {
-            // emitSocket(race.response);
-            message.success("Successfully saved data!");
-            return updateRaceSuccess(race.response);
-          }),
-          takeUntil(actions$.ofType(RacesActions.UPDATE_RACE_SUCCESS)),
-          retry(2),
-          catchError(error => of(updateRaceFailure()))
-        );
+      const { id, name, results } = action.payload;
+      const body = {
+        query: `mutation updateRace($name: String! $id: String! $results: [ResultInput] ) {
+          updateRace(
+              input: {
+                id: $id,
+                name: $name, 
+                results: $results 
+              }
+            ) {
+              id
+              name, 
+              results { 
+                teamName
+                round1Heat
+                round2Heat
+                round3Heat
+                round1Result
+                seed
+                round2Seed
+                round3Seed
+                round2Result
+                round3Result
+                finalResult
+                bib
+                firstName
+                lastName
+                fullName
+                gender
+                uuid
+              } 
+            } 
+          }`,
+        variables: { id, name, results }
+      };
+      return ajax({
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: body
+      }).pipe(
+        map(xhr => {
+          message.success("Successfully saved data!");
+          return updateRaceSuccess(xhr.response.data.updateRace);
+        }),
+        takeUntil(actions$.ofType(RacesActions.UPDATE_RACE_SUCCESS)),
+        retry(2),
+        catchError(error => of(updateRaceFailure()))
+      );
     })
   );
 };
@@ -203,16 +259,22 @@ export const getRace = actions$ => {
             name
             results {
               teamName
-              fullName
-              firstName
-              lastName
-              bib
-              seed
-              gender
-              round1Result
               round1Heat
+              round2Heat
+              round3Heat
+              round1Result
+              seed
+              round2Seed
+              round3Seed
               round2Result
               round3Result
+              finalResult
+              bib
+              firstName
+              lastName
+              fullName
+              gender
+              uuid
             }
           } 
         }`,
@@ -238,7 +300,7 @@ export const getRace = actions$ => {
 
 export const getAllRaces = actions$ => {
   // new lines will break these queries
-  const GET_ALL_RACES = `listRaces { id, name, userId, results { teamName, fullName, firstName, lastName, bib, seed, gender, round1Result, round1Heat, round2Result, round3Result, uuid } }`;
+  const GET_ALL_RACES = `listRaces { id, name, userId }`;
 
   return actions$.pipe(
     ofType(RacesActions.GET_ALL_RACES),
@@ -376,5 +438,28 @@ export const getRaces = actions$ => {
     })
   );
 }
+
+export const updateRace = actions$ => {
+  return actions$.pipe(
+    ofType(RacesActions.UPDATE_RACE),
+    mergeMap(action => {
+      const raceId = action.payload.id;
+      return ajax
+        .put(`${endpoint}/races/${raceId}`, action.payload.results, {
+          "Content-Type": "application/json"
+        })
+        .pipe(
+          map(race => {
+            // emitSocket(race.response);
+            message.success("Successfully saved data!");
+            return updateRaceSuccess(race.response);
+          }),
+          takeUntil(actions$.ofType(RacesActions.UPDATE_RACE_SUCCESS)),
+          retry(2),
+          catchError(error => of(updateRaceFailure()))
+        );
+    })
+  );
+};
 
 */
