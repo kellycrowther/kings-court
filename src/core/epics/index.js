@@ -20,29 +20,52 @@ import {
   getRacesFailure
 } from "../actions";
 import { message } from "antd";
-// import { emitSocket } from "../../sockets/sockets";
-import { XMLHttpRequest } from "xmlhttprequest";
 
 const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
 const graphql_endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT;
 const graphql_api_key = process.env.REACT_APP_GRAPHQL_API_KEY;
 
-function createXHR() {
-  return new XMLHttpRequest();
-}
-
 export const getRaces = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.GET_RACES_BY_USER),
     mergeMap(action => {
-      const userIdParam = `?userId=${action.payload.userId}`;
+      const { userId } = action.payload;
+      const body = {
+        query: `query getRacesByUserId($userId: String! ) {
+          getRacesByUserId(
+              userId: $userId
+            ) {
+              id
+              name
+              userId
+              results {
+                teamName
+                fullName
+                firstName
+                lastName
+                bib
+                seed
+                gender
+                round1Result
+                round1Heat
+                round2Result
+                round3Result
+              }
+            } 
+          }`,
+        variables: { userId }
+      };
       return ajax({
-        createXHR,
-        url: `${endpoint}/races${userIdParam}`,
-        method: "GET"
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: body
       }).pipe(
-        map(races => getRacesByUserSuccess(races.response)),
-        takeUntil(actions$.ofType(RacesActions.GET_RACES_BY_USER)),
+        map(xhr => getRacesByUserSuccess(xhr.response.data.getRacesByUserId)),
+        takeUntil(actions$.ofType(RacesActions.GET_RACES_BY_USER_SUCCESS)),
         retry(2),
         catchError(error => of(getRacesByUserFailure()))
       );
@@ -65,8 +88,10 @@ export const createRace = actions$ => {
                 organization: $wsName
                 results: $results 
               }
-            ) { name, 
-              userId, 
+            ) { 
+              name, 
+              userId,
+              id
               results { 
                 teamName
                 round1Heat
@@ -130,21 +155,35 @@ export const deleteRace = actions$ => {
   return actions$.pipe(
     ofType(RacesActions.DELETE_RACE),
     mergeMap(action => {
-      const raceId = action.payload.id;
-      return ajax
-        .delete(`${endpoint}/races/${raceId}`, {
-          "Content-Type": "application/json"
-        })
-        .pipe(
-          map(race => {
-            // emitSocket([]);
-            message.success("Successfully deleted the race!");
-            return deleteRaceSuccess(race.response);
-          }),
-          takeUntil(actions$.ofType(RacesActions.DELETE_RACE_SUCCESS)),
-          retry(2),
-          catchError(error => of(deleteRaceFailure()))
-        );
+      const { id } = action.payload;
+      const body = {
+        query: `mutation deleteRace($id: ID! ) {
+          deleteRace(
+            id: $id
+          ) { 
+            id
+            name
+          } 
+        }`,
+        variables: { id }
+      };
+      return ajax({
+        url: graphql_endpoint,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": graphql_api_key
+        },
+        body: body
+      }).pipe(
+        map(xhr => {
+          message.success("Successfully deleted the race!");
+          return deleteRaceSuccess(xhr.response.data.deleteRace);
+        }),
+        takeUntil(actions$.ofType(RacesActions.DELETE_RACE_SUCCESS)),
+        retry(2),
+        catchError(error => of(deleteRaceFailure()))
+      );
     })
   );
 };
@@ -160,6 +199,7 @@ export const getRace = actions$ => {
             id: $id
           ) { 
             id
+            userId
             name
             results {
               teamName
@@ -198,7 +238,7 @@ export const getRace = actions$ => {
 
 export const getAllRaces = actions$ => {
   // new lines will break these queries
-  const GET_ALL_RACES = `listRaces { id, name, results { teamName, fullName, firstName, lastName, bib, seed, gender, round1Result, round1Heat, round2Result, round3Result, uuid } }`;
+  const GET_ALL_RACES = `listRaces { id, name, userId, results { teamName, fullName, firstName, lastName, bib, seed, gender, round1Result, round1Heat, round2Result, round3Result, uuid } }`;
 
   return actions$.pipe(
     ofType(RacesActions.GET_ALL_RACES),
@@ -234,6 +274,14 @@ export default combineEpics(
 ****
 **** Deprecated in favor of GraphQL - Leaving for reference ****
 ****
+
+  import { XMLHttpRequest } from "xmlhttprequest";
+
+
+  function createXHR() {
+    return new XMLHttpRequest();
+  }
+
   export const getAllRaces = actions$ => {
     return actions$.pipe(
       ofType(RacesActions.GET_ALL_RACES),
@@ -286,5 +334,47 @@ export default combineEpics(
     })
   );
 };
+
+export const deleteRace = actions$ => {
+    return actions$.pipe(
+    ofType(RacesActions.DELETE_RACE),
+    mergeMap(action => {
+      const raceId = action.payload.id;
+      return ajax
+        .delete(`${endpoint}/races/${raceId}`, {
+          "Content-Type": "application/json"
+        })
+        .pipe(
+          map(race => {
+            // emitSocket([]);
+            message.success("Successfully deleted the race!");
+            return deleteRaceSuccess(race.response);
+          }),
+          takeUntil(actions$.ofType(RacesActions.DELETE_RACE_SUCCESS)),
+          retry(2),
+          catchError(error => of(deleteRaceFailure()))
+        );
+    })
+  );
+};
+
+export const getRaces = actions$ => {
+    return actions$.pipe(
+    ofType(RacesActions.GET_RACES_BY_USER),
+    mergeMap(action => {
+      const userIdParam = `?userId=${action.payload.userId}`;
+      return ajax({
+        createXHR,
+        url: `${endpoint}/races${userIdParam}`,
+        method: "GET"
+      }).pipe(
+        map(races => getRacesByUserSuccess(races.response)),
+        takeUntil(actions$.ofType(RacesActions.GET_RACES_BY_USER)),
+        retry(2),
+        catchError(error => of(getRacesByUserFailure()))
+      );
+    })
+  );
+}
 
 */
