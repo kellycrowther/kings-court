@@ -16,7 +16,6 @@ import CreateRace from "../../components/CreateRace/CreateRace";
 import { useCover } from "../../context/cover";
 import * as uploadTemplate from "./upload-template.csv";
 import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
-// import { emitSocket } from "../../sockets/sockets";
 
 const { Option } = Select;
 
@@ -28,15 +27,12 @@ const { Option } = Select;
 // BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
 // TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
 // BUG: Heat filters disappear after page refresh
-// TODO: socket need to remember last emitted data for each room
-// TODO: websocket server needs ssl certificate
 // TODO: protect the update and delete routes
 // TODO: refactor how SaveButton is passed to results table
 
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
     deleteRace(currentRace);
-    // emitSocket({});
   }
   return (
     <Popconfirm
