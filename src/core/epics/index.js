@@ -28,7 +28,7 @@ import {
 } from "../actions";
 import { message } from "antd";
 
-const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
+// const endpoint = process.env.REACT_APP_SERVERLESS_API_ENDPOINT;
 const graphql_endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT;
 const graphql_api_key = process.env.REACT_APP_GRAPHQL_API_KEY;
 

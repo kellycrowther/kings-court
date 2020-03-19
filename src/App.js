@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Breadcrumb, Layout, Spin, Menu, Icon } from "antd";
 import "./App.css";
@@ -22,7 +22,6 @@ const { Content, Footer, Sider } = Layout;
 
 const App = () => {
   const { loading } = useAuth0();
-  const [currentHeaderMenu, setCurrentHeaderMenu] = useState([]);
 
   if (loading) {
     return <Spin />;
@@ -61,12 +60,7 @@ const App = () => {
                     >
                       {route.subMenu.map(sub => {
                         return (
-                          <Menu.Item
-                            onClick={() =>
-                              setCurrentHeaderMenu(route.headerMenu)
-                            }
-                            key={sub.key}
-                          >
+                          <Menu.Item key={sub.key}>
                             {sub.name}
                             <Link to={sub.path}></Link>
                           </Menu.Item>
@@ -74,10 +68,7 @@ const App = () => {
                       })}
                     </SubMenu>
                   ) : (
-                    <Menu.Item
-                      onClick={() => setCurrentHeaderMenu(route.headerMenu)}
-                      key={route.key}
-                    >
+                    <Menu.Item key={route.key}>
                       <Icon type={route.icon} />
                       <span>{route.name}</span>
                       <Link to={route.path}></Link>
@@ -87,7 +78,13 @@ const App = () => {
               </Menu>
             </Sider>
             <Layout>
-              <AppHeader items={currentHeaderMenu} />
+              <Switch>
+                {routes.map((route, x) => (
+                  <Route exact path={route.path} key={x}>
+                    <AppHeader items={route.headerMenu} />
+                  </Route>
+                ))}
+              </Switch>
               <Content className="content" style={{ padding: "0 24px 24px" }}>
                 <Breadcrumb style={{ margin: "16px 0" }}></Breadcrumb>
                 <div
