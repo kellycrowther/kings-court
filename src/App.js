@@ -80,9 +80,11 @@ const App = () => {
             <Layout>
               <Switch>
                 {routes.map((route, x) => (
-                  <Route exact path={route.path} key={x}>
-                    <AppHeader items={route.headerMenu} />
-                  </Route>
+                  <Route
+                    path={route.path}
+                    key={x}
+                    render={() => <AppHeader items={route.headerMenu} />}
+                  />
                 ))}
               </Switch>
               <Content className="content" style={{ padding: "0 24px 24px" }}>

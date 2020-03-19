@@ -3,7 +3,7 @@ export const routes = [
     app: "home",
     name: "Home",
     icon: "home",
-    path: "/",
+    path: "/home",
     subMenu: [],
     headerMenu: [],
     key: "sub3"
@@ -22,7 +22,7 @@ export const routes = [
       },
       {
         name: "Borderline",
-        path: "/borderline",
+        path: "/state-qualifiers/borderline",
         key: "2"
       }
     ],
