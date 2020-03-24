@@ -2,6 +2,7 @@
 
 - Banquet Check In
 - Banquet Payment
+- User Management
 - DNS or no shows
 - DNF
 - Ties
