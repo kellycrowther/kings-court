@@ -1,3 +1,18 @@
+## TODO
+
+- Banquet Check In
+- Banquet Payment
+- DNS or no shows
+- DNF
+- Ties
+- make button to finalize round results and display next table
+- Add search for racer name on manage page
+- What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
+- Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
+- Heat filters disappear after page refresh
+- protect the update and delete routes
+- refactor how SaveButton is passed to results table
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -19,17 +19,6 @@ import DownloadCsv from "../../components/DownloadCsv/DownloadCsv";
 
 const { Option } = Select;
 
-// TODO: DNS or no shows
-// TODO: DNF
-// TODO: Ties
-// TODO: make button to finalize round results and display next table
-// TODO: Add search for racer name on manage page
-// BUG: What happens if some racers don't have a place in a round? The user forgets or intentionally does not place a racer. Undefined error, make select required
-// TODO: Messaging that all racers in round need place within heat to correctly seed next round. Related to above ^^^
-// BUG: Heat filters disappear after page refresh
-// TODO: protect the update and delete routes
-// TODO: refactor how SaveButton is passed to results table
-
 function DeleteButton({ deleteRace, currentRace }) {
   function confirm() {
     deleteRace(currentRace);
