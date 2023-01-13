@@ -14,7 +14,7 @@
     "graphql": "^14.5.8",
     "json2csv": "^4.5.4",
     "lodash": "^4.17.15",
-    "papaparse": "^5.1.0",
+    "papaparse": "^5.2.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.1.3",
